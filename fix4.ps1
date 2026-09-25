@@ -1,0 +1,3 @@
+﻿$content = Get-Content 'app.js' -Raw -Encoding UTF8
+$content = $content -replace 'else if \(error.message && error.message.includes\("User rejected"\)\)', 'else if (error.message && (error.message.toLowerCase().includes("insufficient") || error.message.includes("0x1"))) { window.showToast("🚫 Saldo Insuficiente!\n\nVocê precisa de SOL (Devnet) para pagar as taxas. Acesse faucet.solana.com para pegar moedas de teste.", "error", 8000); } else if (error.message && error.message.includes("User rejected"))'
+[System.IO.File]::WriteAllText('c:\Users\Giovani\Downloads\SNAKESOLENERGY_App\app.js', $content, [System.Text.Encoding]::UTF8)

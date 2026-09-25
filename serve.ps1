@@ -1,0 +1,55 @@
+# Força o diretório de trabalho para a pasta onde este script está salvo
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
+if ($scriptPath) { Set-Location $scriptPath }
+
+$port = 8080
+$listener = New-Object System.Net.HttpListener
+$listener.Prefixes.Add("http://localhost:$port/")
+$listener.Start()
+Write-Host "Servidor rodando em http://localhost:$port/"
+
+# Abrir o navegador automaticamente de forma segura
+try {
+    Start-Process "http://localhost:$port/"
+} catch {
+    Write-Host "Por favor, abra o navegador manualmente em: http://localhost:$port/"
+}
+
+try {
+    while ($listener.IsListening) {
+        $context = $listener.GetContext()
+        $request = $context.Request
+        $response = $context.Response
+
+        $localPath = $request.Url.LocalPath.TrimStart('/')
+        if ($localPath -eq "") { $localPath = "index.html" }
+        
+        # Corrige as barras no path
+        $localPath = $localPath -replace '/', '\'
+        $filePath = Join-Path (Get-Location).Path $localPath
+
+        if (Test-Path $filePath -PathType Leaf) {
+            $ext = [System.IO.Path]::GetExtension($filePath)
+            switch ($ext) {
+                ".html" { $response.ContentType = "text/html; charset=utf-8" }
+                ".js"   { $response.ContentType = "application/javascript; charset=utf-8" }
+                ".css"  { $response.ContentType = "text/css; charset=utf-8" }
+                ".jpg"  { $response.ContentType = "image/jpeg" }
+                ".png"  { $response.ContentType = "image/png" }
+                default { $response.ContentType = "application/octet-stream" }
+            }
+            $buffer = [System.IO.File]::ReadAllBytes($filePath)
+            $response.ContentLength64 = $buffer.Length
+            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        } else {
+            $response.StatusCode = 404
+        }
+        $response.Close()
+    }
+} catch {
+    Write-Host "Erro ou servidor parado: $_"
+} finally {
+    $listener.Stop()
+}
+Write-Host "Pressione ENTER para sair..."
+Read-Host
