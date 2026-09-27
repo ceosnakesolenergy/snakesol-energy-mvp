@@ -27,15 +27,8 @@
 
         try {
             validate(payload);
-            const normalizedPhone = payload.phone.replace(/\D/g, '');
-            const maskedPhone = normalizedPhone.replace(/\d(?=\d{2})/g, '*');
-            const [emailUser] = payload.email.split('@');
-            const maskedEmail = (emailUser ? emailUser.slice(0, 2) : 'xx') + '***@***';
             const sessionProfile = {
-                name: payload.name.split(' ')[0],
-                phoneMasked: maskedPhone,
-                emailMasked: maskedEmail,
-                ucLast4: payload.uc.slice(-4),
+                onboardingCompleted: true,
                 savedAt: new Date().toISOString()
             };
             sessionStorage.setItem('snakesol_logistic_profile', JSON.stringify(sessionProfile));

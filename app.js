@@ -529,7 +529,7 @@
     window.submitP2PPurchase = async function(amount, seller) {
       const feedback = document.getElementById('p2p-feedback');
       if (feedback) feedback.classList.remove('hidden');
-      await window.executeTransaction('Comprar ' + amount + ' $ENERGY P2P (' + seller + ')');
+      await window.executeTransaction('Comprar ' + amount + ' $ENERGY P2P (' + seller + ')', 'P2P');
       setTimeout(() => window.closeP2PModal(), 1000);
     };
 
@@ -599,7 +599,7 @@
 
     window.confirmSizingPurchase = async function() {
       window.closeSizingModal();
-      await window.executeTransaction('Adquirir Kit Solar DePIN (' + currentSizingPrice + ' USDT)');
+      await window.executeTransaction('Adquirir Kit Solar DePIN (' + currentSizingPrice + ' USDT)', 'HW');
     };
 
     // ========================================================================
@@ -642,7 +642,7 @@
         if (!input) return;
         const amount = SecurityValidation.validateAmount(input.value, 10, 1000000);
         window.closeMapInvestModal();
-        await window.executeTransaction('Investir ' + amount + ' USDT em ' + (window.currentMapTarget || 'DePIN'));
+        await window.executeTransaction('Investir ' + amount + ' USDT em ' + (window.currentMapTarget || 'DePIN'), 'INV');
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
       }
@@ -699,7 +699,7 @@
         setTimeout(() => {
           btn.innerHTML = originalHtml;
           btn.disabled = false;
-          window.executeTransaction('Fazer Stake de ' + amount + ' $SNAKE');
+          window.executeTransaction('Fazer Stake de ' + amount + ' $SNAKE', 'STK');
         }, 350);
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
@@ -756,7 +756,7 @@
         return;
       }
       const amountIn = document.getElementById('swap-input').value;
-      window.executeTransaction('Swap ' + amountIn + ' ' + fromToken + ' por $' + toToken + ' na DEX');
+      window.executeTransaction('Swap ' + amountIn + ' ' + fromToken + ' por $' + toToken + ' na DEX', 'SWAP');
     };
 
     // ========================================================================
@@ -814,7 +814,7 @@
         setTimeout(() => {
           btn.innerHTML = originalHtml;
           btn.disabled = false;
-          window.executeTransaction('Voto DAO: ' + selectedOption + ' (' + weight + ' $SNAKE)');
+          window.executeTransaction('Voto DAO: ' + selectedOption + ' (' + weight + ' $SNAKE)', 'VOTE');
         }, 350);
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
@@ -824,7 +824,7 @@
     // ========================================================================
     // MAIN TRANSACTION EXECUTION (with Rate Limiting)
     // ========================================================================
-    window.executeTransaction = async function(actionName) {
+    window.executeTransaction = async function(actionName, actionCode = 'GEN') {
       if (!window.isPhantomConnected || !userPublicKey) {
         SafeDOM.createToast('Conecte a carteira primeiro!', 'warning');
         return;
@@ -878,16 +878,8 @@
         const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'), 'processed');
         const transaction = new solanaWeb3.Transaction();
         const memoProgramId = new solanaWeb3.PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
-        const lowerAction = String(actionName || '').toLowerCase();
-        let actionCode = 'GEN';
-        if (lowerAction.includes('swap')) actionCode = 'SWAP';
-        else if (lowerAction.includes('stake')) actionCode = 'STK';
-        else if (lowerAction.includes('voto')) actionCode = 'VOTE';
-        else if (lowerAction.includes('p2p')) actionCode = 'P2P';
-        else if (lowerAction.includes('invest')) actionCode = 'INV';
-        else if (lowerAction.includes('carregador') || lowerAction.includes('kit solar')) actionCode = 'HW';
-        else if (lowerAction.includes('nft') || lowerAction.includes('certificado')) actionCode = 'NFT';
-        const memoPayload = `SSE:${actionCode}:${Date.now().toString(36)}`;
+        const normalizedCode = String(actionCode || 'GEN').toUpperCase().replace(/[^A-Z0-9_]/g, '').slice(0, 8) || 'GEN';
+        const memoPayload = `SSE:${normalizedCode}:${Date.now().toString(36)}`;
 
         transaction.add(
           solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({
@@ -920,11 +912,14 @@
         if (targetButton) targetButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Confirmando...';
 
         signature = await connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: false });
-        await connection.confirmTransaction({
+        const confirmation = await connection.confirmTransaction({
           signature,
           blockhash: latestBlockhash.blockhash,
           lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
         }, 'confirmed');
+        if (confirmation?.value?.err) {
+          throw new Error('Transação rejeitada na confirmação');
+        }
 
         SafeDOM.createToast('⚡ Transação Confirmada na Blockchain!\n\nA transação real foi gravada na Devnet com sucesso.', 'success');
 
@@ -1088,11 +1083,11 @@
     });
 
     bindClick('connect-wallet-btn', () => window.connectPhantom());
-    bindClick('btn-emit-carbon', () => window.executeTransaction('Emitir NFT de Crédito de Carbono'));
+    bindClick('btn-emit-carbon', () => window.executeTransaction('Emitir NFT de Crédito de Carbono', 'NFT'));
     bindClick('btn-open-sizing', () => window.openSizingModal());
-    bindClick('btn-buy-wallbox', () => window.executeTransaction('Comprar Carregador VE'));
+    bindClick('btn-buy-wallbox', () => window.executeTransaction('Comprar Carregador VE', 'HW'));
     bindClick('btn-show-p2p', () => window.showP2PModal());
-    bindClick('btn-pay-ev', () => window.executeTransaction('Pagar Recarga VE com $ENERGY'));
+    bindClick('btn-pay-ev', () => window.executeTransaction('Pagar Recarga VE com $ENERGY', 'EV'));
     bindClick('btn-show-stake', () => window.showStakeModal());
     bindClick('btn-show-vote', () => window.showVoteModal());
     bindClick('btn-do-swap', () => window.executeSwap());
