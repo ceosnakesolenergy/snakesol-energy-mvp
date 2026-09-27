@@ -1,6 +1,5 @@
 (function secureApp() {
   'use strict';
-  window.Buffer = window.Buffer || (window.buffer && window.buffer.Buffer);
 
   // ============================================================================
   // SECURITY MODULE: Input Validation
