@@ -27,7 +27,17 @@
 
         try {
             validate(payload);
-            sessionStorage.setItem('snakesol_logistic_profile', JSON.stringify(payload));
+            const maskedPhone = payload.phone.replace(/\d(?=\d{2})/g, '*');
+            const [emailUser, emailDomain = ''] = payload.email.split('@');
+            const maskedEmail = (emailUser ? emailUser.slice(0, 2) : 'xx') + '***@' + emailDomain;
+            const sessionProfile = {
+                name: payload.name.split(' ')[0],
+                phoneMasked: maskedPhone,
+                emailMasked: maskedEmail,
+                ucLast4: payload.uc.slice(-4),
+                savedAt: new Date().toISOString()
+            };
+            sessionStorage.setItem('snakesol_logistic_profile', JSON.stringify(sessionProfile));
         } catch (err) {
             if (window.showToast) {
                 window.showToast(err.message || 'Dados de cadastro inválidos.', 'error');
@@ -43,7 +53,7 @@
         }
 
         const firstName = payload.name.split(' ')[0] || 'Usuário';
-        const msg = `📦 Cadastro Logístico Concluído!\n\nOlá, ${firstName}. Seus dados físicos foram salvos nesta sessão para o envio do Kit Solar / Wallbox.\n\n🔗 PRÓXIMO PASSO:\nConecte sua Phantom para registrar suas interações na Solana Devnet.`;
+        const msg = `📦 Cadastro Logístico Concluído!\n\nOlá, ${firstName}. Apenas um resumo mascarado foi salvo nesta sessão para continuidade do onboarding.\n\n🔗 PRÓXIMO PASSO:\nConecte sua Phantom para registrar suas interações na Solana Devnet.`;
         if (window.showToast) {
             window.showToast(msg, 'success');
         } else {

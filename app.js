@@ -871,7 +871,16 @@
         const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'), 'processed');
         const transaction = new solanaWeb3.Transaction();
         const memoProgramId = new solanaWeb3.PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
-        const memoPayload = SecurityValidation.sanitizeText(String(actionName || 'SNAKESOL_TX')).slice(0, 120);
+        const lowerAction = String(actionName || '').toLowerCase();
+        let actionCode = 'GEN';
+        if (lowerAction.includes('swap')) actionCode = 'SWAP';
+        else if (lowerAction.includes('stake')) actionCode = 'STK';
+        else if (lowerAction.includes('voto')) actionCode = 'VOTE';
+        else if (lowerAction.includes('p2p')) actionCode = 'P2P';
+        else if (lowerAction.includes('invest')) actionCode = 'INV';
+        else if (lowerAction.includes('carregador') || lowerAction.includes('kit solar')) actionCode = 'HW';
+        else if (lowerAction.includes('nft') || lowerAction.includes('certificado')) actionCode = 'NFT';
+        const memoPayload = `SSE:${actionCode}:${Date.now().toString(36)}`;
 
         transaction.add(
           solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({
@@ -1009,13 +1018,30 @@
       all.forEach((entry, idx) => {
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between bg-black/40 rounded-xl p-3 border ' + (entry.isUser ? 'border-brand-accent/40' : 'border-white/5');
-        row.innerHTML =
-          '<div class="flex items-center gap-3">' +
-          '<span class="text-xs font-bold text-gray-400 w-5">#' + (idx + 1) + '</span>' +
-          '<i class="fa-solid ' + entry.icon + ' text-brand-secondary"></i>' +
-          '<span class="text-sm font-semibold ' + (entry.isUser ? 'text-brand-accent' : 'text-white') + '">' + SecurityValidation.sanitizeText(entry.name) + '</span>' +
-          '</div>' +
-          '<span class="text-xs font-mono text-gray-300">' + entry.score.toLocaleString('en-US') + ' pts</span>';
+        const left = document.createElement('div');
+        left.className = 'flex items-center gap-3';
+
+        const rank = document.createElement('span');
+        rank.className = 'text-xs font-bold text-gray-400 w-5';
+        rank.textContent = '#' + (idx + 1);
+
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid ' + entry.icon + ' text-brand-secondary';
+
+        const name = document.createElement('span');
+        name.className = 'text-sm font-semibold ' + (entry.isUser ? 'text-brand-accent' : 'text-white');
+        name.textContent = SecurityValidation.sanitizeText(entry.name);
+
+        left.appendChild(rank);
+        left.appendChild(icon);
+        left.appendChild(name);
+
+        const score = document.createElement('span');
+        score.className = 'text-xs font-mono text-gray-300';
+        score.textContent = entry.score.toLocaleString('en-US') + ' pts';
+
+        row.appendChild(left);
+        row.appendChild(score);
         list.appendChild(row);
       });
     };
