@@ -104,7 +104,7 @@ el.textContent = String(userPublicKey);
 <!-- Adicionado em index.html -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://bundle.run https://unpkg.com;
+  script-src 'self' https://cdn.tailwindcss.com https://bundle.run https://unpkg.com;
   style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com;
   img-src 'self' data: https:;
   connect-src 'self' https://api.devnet.solana.com https://api.mainnet-beta.solana.com;
@@ -206,7 +206,6 @@ catch (error) {
 
 ### v0.2 (High Priority)
 - [ ] Adicionar SRI (Subresource Integrity) em CDNs
-- [ ] Remover handlers inline, usar event listeners
 - [ ] Implementar HTTPS only (Secure flag em cookies)
 - [ ] Adicionar X-Frame-Options header
 - [ ] Testing: OWASP ZAP automated scan
@@ -240,7 +239,6 @@ catch (error) {
 - [x] Sem hardcoded secrets
 - [x] Erros genéricos ao usuário
 - [ ] SRI em CDNs (pendente)
-- [ ] Event listeners (não inline onclick) (v0.2)
 - [ ] HTTPS enforcement (v0.2)
 - [ ] Profissional security audit (v1.0)
 

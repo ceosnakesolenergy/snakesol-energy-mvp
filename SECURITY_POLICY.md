@@ -31,7 +31,6 @@ Se você descobriu uma vulnerabilidade de segurança no **snakesol-energy-mvp**,
 ### ⏳ Pendentes (roadmap v0.2+)
 
 - **SRI em CDNs** - Será adicionado em v0.2
-- **Handlers inline** - Refatorar para event listeners em v0.2
 - **HTTPS enforcement** - Será implementado em v0.2
 
 ---
@@ -83,7 +82,7 @@ npm audit fix
 ## Roadmap de Segurança
 
 - [x] v0.1 - Input validation, XSS prevention, CSP
-- [ ] v0.2 - SRI, event listeners, HTTPS
+- [ ] v0.2 - SRI, HTTPS
 - [ ] v0.3 - Audit profissional
 - [ ] v1.0 - Bug bounty program
 
