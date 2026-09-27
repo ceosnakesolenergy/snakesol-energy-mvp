@@ -21,7 +21,9 @@
     },
 
     validateDecimal(value, min = 0, max = 1000000) {
-      const num = Number.parseFloat(value);
+      const raw = String(value ?? '').trim();
+      if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error(`Valor inválido`);
+      const num = Number.parseFloat(raw);
       if (!Number.isFinite(num)) throw new Error(`Valor inválido`);
       if (num < min || num > max) throw new Error(`Valor deve estar entre ${min} e ${max}`);
       return num;
@@ -912,9 +914,10 @@
         if (targetButton) targetButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Confirmando...';
 
         signature = await connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: false });
+        const confirmationBlockhash = signedTransaction.recentBlockhash || latestBlockhash.blockhash;
         await connection.confirmTransaction({
           signature,
-          blockhash: latestBlockhash.blockhash,
+          blockhash: confirmationBlockhash,
           lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
         }, 'confirmed');
 
