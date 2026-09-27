@@ -95,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Suporte para o botão antigo
         const connectBtns = document.querySelectorAll('.btn-connect');
         connectBtns.forEach(btn => {
-            btn.innerHTML = `<i class="fa-solid fa-wallet mr-2"></i> ${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}`;
+            const safeKey = String(publicKey).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            btn.innerHTML = `<i class="fa-solid fa-wallet mr-2"></i> ${safeKey.slice(0, 4)}...${safeKey.slice(-4)}`;
             btn.classList.replace('bg-brand-purple', 'bg-brand-accent');
             btn.classList.add('text-black');
         });
@@ -160,9 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(modal);
     };
 
-    // Estado MOCK
-    const savedState = localStorage.getItem('snakesol_portfolio_state'); 
-    window.mockState = savedState ? JSON.parse(savedState) : { energy: 50, snake: 0, hw: 1, co2: 14.2, p2p: { solarfazenda: 1500, pedro: 300, condominio: 5000 } };
+    // Estado MOCK (Ofuscado contra edições diretas fáceis no console)
+    const savedState = localStorage.getItem('snakesol_portfolio_state');
+    let parsedState = null;
+    if (savedState) {
+        try { parsedState = JSON.parse(atob(savedState)); }
+        catch (e) { try { parsedState = JSON.parse(savedState); } catch(e2) {} }
+    }
+    window.mockState = parsedState ? parsedState : { energy: 50, snake: 0, hw: 1, co2: 14.2, p2p: { solarfazenda: 1500, pedro: 300, condominio: 5000 } };
     if (!window.mockState.p2p) {
         window.mockState.p2p = { solarfazenda: 1500, pedro: 300, condominio: 5000 };
     }
@@ -319,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hwEl) hwEl.innerHTML = `${displayHw} <span class="text-sm font-normal text-gray-500">Unids</span>`;
         if (co2El) co2El.innerText = `${displayCo2} Kg`;
         
-        localStorage.setItem('snakesol_portfolio_state', JSON.stringify(window.mockState));
+        localStorage.setItem('snakesol_portfolio_state', btoa(JSON.stringify(window.mockState)));
         
         updateUSDValue();
         if (window.updateROIUSD) window.updateROIUSD();
@@ -358,15 +364,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (logList.children.length > 20) logList.removeChild(logList.lastChild);
         
         if (saveToStorage) {
-            let history = JSON.parse(localStorage.getItem('snakeTxHistory') || '[]');
+            const rawHistory = localStorage.getItem('snakeTxHistory');
+            let history = [];
+            if (rawHistory) {
+                try { history = JSON.parse(atob(rawHistory)); } 
+                catch(e) { try { history = JSON.parse(rawHistory); } catch(e2) {} }
+            }
             history.unshift({ actionName, signature });
             if (history.length > 20) history.pop();
-            localStorage.setItem('snakeTxHistory', JSON.stringify(history));
+            localStorage.setItem('snakeTxHistory', btoa(JSON.stringify(history)));
         }
     };
     
     window.loadTxHistory = function() {
-        const history = JSON.parse(localStorage.getItem('snakeTxHistory') || '[]');
+        const rawHistory = localStorage.getItem('snakeTxHistory');
+        let history = [];
+        if (rawHistory) {
+            try { history = JSON.parse(atob(rawHistory)); } 
+            catch(e) { try { history = JSON.parse(rawHistory); } catch(e2) {} }
+        }
         // Adiciona de trás pra frente pra manter a ordem
         history.reverse().forEach(tx => {
             window.addLogEntry(tx.actionName, tx.signature, false);

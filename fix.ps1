@@ -1,4 +1,0 @@
-﻿$content = Get-Content 'app.js' -Raw -Encoding UTF8
-$content = $content -replace 'Edi[^\x20-\x7E]+o #<span id="nft-edition">---</span>', 'Edição #<span id="nft-edition">'' + (Math.floor(Math.random() * 8999) + 1000) + ''</span>'
-$content = $content -replace 'else if \(error.message && error.message.includes\("User rejected"\)\)', 'else if (error.message && (error.message.toLowerCase().includes("insufficient") || error.message.includes("0x1"))) { window.showToast("🚫 Saldo Insuficiente!\n\nVocê precisa de SOL (Devnet) para pagar as taxas (Gas). Acesse faucet.solana.com para pegar moedas de teste.", "error", 8000); } else if (error.message && error.message.includes("User rejected"))'
-[System.IO.File]::WriteAllText('c:\Users\Giovani\Downloads\SNAKESOLENERGY_App\app.js', $content, [System.Text.Encoding]::UTF8)
