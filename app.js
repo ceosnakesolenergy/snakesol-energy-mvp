@@ -893,7 +893,7 @@
           })
         );
 
-        const latestBlockhash = await connection.getLatestBlockhash('finalized');
+        const latestBlockhash = await connection.getLatestBlockhash('confirmed');
         transaction.recentBlockhash = latestBlockhash.blockhash;
         transaction.feePayer = validPublicKey;
 
