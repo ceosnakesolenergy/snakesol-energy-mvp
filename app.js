@@ -525,11 +525,16 @@
     };
 
     window.resetSizing = function() {
+      currentSizingPrice = 0;
       document.getElementById('sizing-step-1').classList.remove('hidden');
       document.getElementById('sizing-step-2').classList.add('hidden');
     };
 
     window.confirmSizingPurchase = async function() {
+      if (!Number.isFinite(currentSizingPrice) || currentSizingPrice <= 0) {
+        SafeDOM.createToast('Calcule o projeto antes de confirmar a compra.', 'warning');
+        return;
+      }
       window.closeSizingModal();
       await window.executeTransaction('Adquirir Kit Solar DePIN (' + currentSizingPrice + ' USDT)');
     };
@@ -731,7 +736,9 @@
 
     window.submitVote = async function() {
       try {
-        const selectedOption = document.querySelector('input[name="dao-vote"]:checked').value;
+        const selectedVote = document.querySelector('input[name="dao-vote"]:checked');
+        if (!selectedVote) throw new Error('Selecione uma opção de voto.');
+        const selectedOption = selectedVote.value;
         const weight = SecurityValidation.validateAmount(document.getElementById('vote-weight').value, 1, 1000000);
 
         const btn = document.getElementById('submit-vote-btn');
@@ -749,6 +756,43 @@
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
       }
+    };
+
+    // ========================================================================
+    // NFT MODAL
+    // ========================================================================
+    window.showNFTModal = function() {
+      const modal = document.getElementById('nft-modal');
+      if (!modal) return;
+      const editionEl = document.getElementById('nft-edition');
+      if (editionEl) {
+        const edition = Math.floor(Math.random() * 10000);
+        editionEl.textContent = String(edition).padStart(4, '0');
+      }
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      modal.classList.remove('opacity-0');
+      modal.classList.add('opacity-100');
+      const content = modal.querySelector('.transform');
+      if (content) {
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }
+    };
+
+    window.closeNFTModal = function() {
+      const modal = document.getElementById('nft-modal');
+      if (!modal) return;
+      const content = modal.querySelector('.transform');
+      modal.classList.remove('opacity-100');
+      modal.classList.add('opacity-0');
+      if (content) {
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
     };
 
     // ========================================================================

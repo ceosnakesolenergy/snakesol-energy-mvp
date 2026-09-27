@@ -66,7 +66,7 @@
     </aside>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden relative">
-        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B0F19] border-t border-white/10 z-50 flex justify-between px-1 py-3 pb-safe">
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B0F19] border-t border-white/10 z-50 flex justify-between px-1 py-3 [padding-bottom:max(12px,env(safe-area-inset-bottom))]">
             <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="nav-mobile-item text-[#14F195] flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-chart-pie"></i><span class="text-[9px]">Dashboard</span></button>
             <button onclick="switchTab('map')" id="mob-nav-map" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-earth-americas"></i><span class="text-[9px]">Mapa</span></button>
             <button onclick="switchTab('store')" id="mob-nav-store" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-store"></i><span class="text-[9px]">Loja</span></button>
