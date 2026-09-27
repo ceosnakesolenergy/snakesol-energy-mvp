@@ -1110,17 +1110,6 @@
     const swapToToken = document.getElementById('swap-to-token');
     if (swapToToken) swapToToken.addEventListener('change', () => window.updateSwapCalculation());
 
-    const logisticForm = document.getElementById('logistic-form');
-    if (logisticForm) {
-      logisticForm.addEventListener('submit', (event) => {
-        if (typeof window.handleFullRegistration === 'function') {
-          window.handleFullRegistration(event);
-        } else {
-          event.preventDefault();
-        }
-      });
-    }
-
     document.querySelectorAll('.p2p-buy-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         const sellerId = btn.getAttribute('data-seller-id');

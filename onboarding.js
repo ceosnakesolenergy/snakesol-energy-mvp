@@ -56,4 +56,17 @@
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    const bindOnboardingForm = () => {
+        const form = document.getElementById('logistic-form');
+        if (!form || form.dataset.bound === '1') return;
+        form.dataset.bound = '1';
+        form.addEventListener('submit', window.handleFullRegistration);
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindOnboardingForm);
+    } else {
+        bindOnboardingForm();
+    }
 })();
