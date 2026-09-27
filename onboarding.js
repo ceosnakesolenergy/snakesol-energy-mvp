@@ -64,9 +64,7 @@
         form.addEventListener('submit', window.handleFullRegistration);
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', bindOnboardingForm);
-    } else {
-        bindOnboardingForm();
-    }
+    bindOnboardingForm();
+    document.addEventListener('DOMContentLoaded', bindOnboardingForm);
+    window.addEventListener('load', bindOnboardingForm);
 })();
