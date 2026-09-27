@@ -20,6 +20,15 @@
       return num;
     },
 
+    validateDecimal(value, min = 0, max = 1000000) {
+      const raw = String(value ?? '').trim().replace(',', '.');
+      if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error(`Valor inválido`);
+      const num = Number.parseFloat(raw);
+      if (!Number.isFinite(num)) throw new Error(`Valor inválido`);
+      if (num < min || num > max) throw new Error(`Valor deve estar entre ${min} e ${max}`);
+      return num;
+    },
+
     validateEmail(value) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!re.test(value)) throw new Error('Email inválido');
@@ -172,6 +181,64 @@
     window.isPhantomConnected = false;
     window.showToast = SafeDOM.createToast;
 
+    window.switchTab = function(tabId) {
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach((tab) => {
+        tab.classList.remove('block');
+        tab.classList.add('hidden');
+      });
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('block');
+      }
+
+      if (tabId === 'map') {
+        setTimeout(() => {
+          if (window.map && typeof window.map.invalidateSize === 'function') {
+            window.map.invalidateSize();
+          }
+        }, 100);
+      }
+
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach((item) => {
+        item.classList.remove('active', 'text-[#14F195]');
+        item.classList.add('text-gray-400');
+      });
+
+      const activeNav = document.getElementById('nav-' + tabId);
+      if (activeNav) {
+        activeNav.classList.add('active');
+        activeNav.classList.remove('text-gray-400');
+        activeNav.classList.add('text-[#14F195]');
+      }
+      document.querySelectorAll('.nav-item[data-tab]').forEach((item) => {
+        item.setAttribute('aria-selected', item === activeNav ? 'true' : 'false');
+      });
+
+      const mobNavItems = document.querySelectorAll('.nav-mobile-item');
+      mobNavItems.forEach((item) => {
+        item.classList.remove('text-[#14F195]');
+        item.classList.add('text-gray-400');
+      });
+
+      const activeMobNav = document.getElementById('mob-nav-' + tabId);
+      if (activeMobNav) {
+        activeMobNav.classList.remove('text-gray-400');
+        activeMobNav.classList.add('text-[#14F195]');
+      }
+      document.querySelectorAll('.nav-mobile-item[data-tab]').forEach((item) => {
+        item.setAttribute('aria-selected', item === activeMobNav ? 'true' : 'false');
+      });
+    };
+
+    function bindClick(id, handler) {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', handler);
+    }
+
     // ========================================================================
     // WALLET CONNECTION
     // ========================================================================
@@ -266,8 +333,8 @@
           const toToken = document.getElementById('swap-to-token')?.value || 'ENERGY';
 
           if (swapOut && swapIn) {
-            const amountIn = SecurityValidation.validateAmount(swapIn.value, 0, 100000);
-            const amountOut = SecurityValidation.validateAmount(swapOut.value, 0, 100000);
+            const amountIn = SecurityValidation.validateDecimal(swapIn.value, 0, 100000);
+            const amountOut = SecurityValidation.validateDecimal(swapOut.value, 0, 100000);
 
             if (toToken === 'ENERGY') window.mockState.energy += amountOut;
             if (toToken === 'SNAKE') window.mockState.snake += amountOut;
@@ -327,6 +394,7 @@
       updateUSDValue();
       if (window.updateROIUSD) window.updateROIUSD();
       if (window.renderBadges) window.renderBadges();
+      if (window.renderLeaderboard) window.renderLeaderboard();
     };
 
     // ========================================================================
@@ -461,7 +529,7 @@
     window.submitP2PPurchase = async function(amount, seller) {
       const feedback = document.getElementById('p2p-feedback');
       if (feedback) feedback.classList.remove('hidden');
-      await window.executeTransaction('Comprar ' + amount + ' $ENERGY P2P (' + seller + ')');
+      await window.executeTransaction('Comprar ' + amount + ' $ENERGY P2P (' + seller + ')', 'P2P');
       setTimeout(() => window.closeP2PModal(), 1000);
     };
 
@@ -531,7 +599,7 @@
 
     window.confirmSizingPurchase = async function() {
       window.closeSizingModal();
-      await window.executeTransaction('Adquirir Kit Solar DePIN (' + currentSizingPrice + ' USDT)');
+      await window.executeTransaction('Adquirir Kit Solar DePIN (' + currentSizingPrice + ' USDT)', 'HW');
     };
 
     // ========================================================================
@@ -574,7 +642,7 @@
         if (!input) return;
         const amount = SecurityValidation.validateAmount(input.value, 10, 1000000);
         window.closeMapInvestModal();
-        await window.executeTransaction('Investir ' + amount + ' USDT em ' + (window.currentMapTarget || 'DePIN'));
+        await window.executeTransaction('Investir ' + amount + ' USDT em ' + (window.currentMapTarget || 'DePIN'), 'INV');
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
       }
@@ -631,7 +699,7 @@
         setTimeout(() => {
           btn.innerHTML = originalHtml;
           btn.disabled = false;
-          window.executeTransaction('Fazer Stake de ' + amount + ' $SNAKE');
+          window.executeTransaction('Fazer Stake de ' + amount + ' $SNAKE', 'STK');
         }, 350);
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
@@ -654,7 +722,7 @@
       try {
         const fromToken = document.getElementById('swap-from-token').value;
         const toToken = document.getElementById('swap-to-token').value;
-        const amountIn = SecurityValidation.validateAmount(document.getElementById('swap-input').value, 0, 1000000);
+        const amountIn = SecurityValidation.validateDecimal(document.getElementById('swap-input').value, 0, 1000000);
 
         SafeDOM.setText('dex-from-lbl', fromToken);
 
@@ -687,8 +755,12 @@
         SafeDOM.createToast('Selecione tokens diferentes para trocar.', 'warning');
         return;
       }
-      const amountIn = document.getElementById('swap-input').value;
-      window.executeTransaction('Swap ' + amountIn + ' ' + fromToken + ' por $' + toToken + ' na DEX');
+      try {
+        const amountIn = SecurityValidation.validateDecimal(document.getElementById('swap-input').value, 0, 1000000);
+        window.executeTransaction('Swap ' + amountIn + ' ' + fromToken + ' por $' + toToken + ' na DEX', 'SWAP');
+      } catch (err) {
+        SafeDOM.createToast('Valor de swap inválido', 'error');
+      }
     };
 
     // ========================================================================
@@ -731,7 +803,9 @@
 
     window.submitVote = async function() {
       try {
-        const selectedOption = document.querySelector('input[name="dao-vote"]:checked').value;
+        const selected = document.querySelector('input[name="dao-vote"]:checked');
+        if (!selected) throw new Error('Selecione uma opção de voto');
+        const selectedOption = selected.value;
         const weight = SecurityValidation.validateAmount(document.getElementById('vote-weight').value, 1, 1000000);
 
         const btn = document.getElementById('submit-vote-btn');
@@ -744,7 +818,7 @@
         setTimeout(() => {
           btn.innerHTML = originalHtml;
           btn.disabled = false;
-          window.executeTransaction('Voto DAO: ' + selectedOption + ' (' + weight + ' $SNAKE)');
+          window.executeTransaction('Voto DAO: ' + selectedOption + ' (' + weight + ' $SNAKE)', 'VOTE');
         }, 350);
       } catch (err) {
         SafeDOM.createToast(err.message, 'error');
@@ -754,7 +828,7 @@
     // ========================================================================
     // MAIN TRANSACTION EXECUTION (with Rate Limiting)
     // ========================================================================
-    window.executeTransaction = async function(actionName) {
+    window.executeTransaction = async function(actionName, actionCode = 'GEN') {
       if (!window.isPhantomConnected || !userPublicKey) {
         SafeDOM.createToast('Conecte a carteira primeiro!', 'warning');
         return;
@@ -807,12 +881,21 @@
 
         const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'), 'processed');
         const transaction = new solanaWeb3.Transaction();
+        const memoProgramId = new solanaWeb3.PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
+        const normalizedCode = String(actionCode || 'GEN').toUpperCase().replace(/[^A-Z0-9_]/g, '').slice(0, 8) || 'GEN';
+        const memoPayload = `SSE:${normalizedCode}:${Date.now().toString(36)}`;
 
         transaction.add(
           solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({
             microLamports: 1000000
           })
         );
+
+        transaction.add(new solanaWeb3.TransactionInstruction({
+          keys: [],
+          programId: memoProgramId,
+          data: new TextEncoder().encode(memoPayload)
+        }));
 
         transaction.add(
           solanaWeb3.SystemProgram.transfer({
@@ -833,9 +916,14 @@
         if (targetButton) targetButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Confirmando...';
 
         signature = await connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: false });
-
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
+        const confirmation = await connection.confirmTransaction({
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
+        if (confirmation?.value?.err) {
+          throw new Error('Transação rejeitada na confirmação');
+        }
         SafeDOM.createToast('⚡ Transação Confirmada na Blockchain!\n\nA transação real foi gravada na Devnet com sucesso.', 'success');
 
         window.addLogEntry(actionName, signature);
@@ -897,6 +985,72 @@
       }
     };
 
+    window.showNFTModal = function() {
+      const modal = document.getElementById('nft-modal');
+      if (!modal) return;
+      const edition = document.getElementById('nft-edition');
+      if (edition) edition.textContent = String(Math.floor(Math.random() * 9000) + 1000);
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        const content = modal.querySelector('.transform');
+        if (content) content.classList.remove('scale-95');
+      }, 10);
+    };
+
+    window.closeNFTModal = function() {
+      const modal = document.getElementById('nft-modal');
+      if (!modal) return;
+      const content = modal.querySelector('.transform');
+      modal.classList.add('opacity-0');
+      if (content) content.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    };
+
+    window.renderLeaderboard = function() {
+      const list = document.getElementById('leaderboard-list');
+      if (!list) return;
+      const base = [
+        { name: 'SolarFazenda_BR', score: 9200, icon: 'fa-solar-panel' },
+        { name: 'CondominioSolar_SP', score: 8800, icon: 'fa-building' },
+        { name: 'EVHub_Curitiba', score: 7400, icon: 'fa-charging-station' }
+      ];
+      const userScore = Math.round((window.mockState.energy * 3) + (window.mockState.hw * 900) + (window.mockState.co2 * 20));
+      const all = [...base, { name: 'Você', score: userScore, icon: 'fa-user-astronaut', isUser: true }]
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 4);
+      list.innerHTML = '';
+      all.forEach((entry, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between bg-black/40 rounded-xl p-3 border ' + (entry.isUser ? 'border-brand-accent/40' : 'border-white/5');
+        const left = document.createElement('div');
+        left.className = 'flex items-center gap-3';
+
+        const rank = document.createElement('span');
+        rank.className = 'text-xs font-bold text-gray-400 w-5';
+        rank.textContent = '#' + (idx + 1);
+
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid ' + entry.icon + ' text-brand-secondary';
+
+        const name = document.createElement('span');
+        name.className = 'text-sm font-semibold ' + (entry.isUser ? 'text-brand-accent' : 'text-white');
+        name.textContent = SecurityValidation.sanitizeText(entry.name);
+
+        left.appendChild(rank);
+        left.appendChild(icon);
+        left.appendChild(name);
+
+        const score = document.createElement('span');
+        score.className = 'text-xs font-mono text-gray-300';
+        score.textContent = entry.score.toLocaleString('en-US') + ' pts';
+
+        row.appendChild(left);
+        row.appendChild(score);
+        list.appendChild(row);
+      });
+    };
+
     // ========================================================================
     // ROI SLIDER
     // ========================================================================
@@ -924,8 +1078,65 @@
     // ========================================================================
     // INITIALIZATION
     // ========================================================================
+    document.querySelectorAll('[data-tab]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const tabId = el.getAttribute('data-tab');
+        if (tabId) window.switchTab(tabId);
+      });
+    });
+
+    bindClick('connect-wallet-btn', () => window.connectPhantom());
+    bindClick('btn-emit-carbon', () => window.executeTransaction('Emitir NFT de Crédito de Carbono', 'NFT'));
+    bindClick('btn-open-sizing', () => window.openSizingModal());
+    bindClick('btn-buy-wallbox', () => window.executeTransaction('Comprar Carregador VE', 'HW'));
+    bindClick('btn-show-p2p', () => window.showP2PModal());
+    bindClick('btn-pay-ev', () => window.executeTransaction('Pagar Recarga VE com $ENERGY', 'EV'));
+    bindClick('btn-show-stake', () => window.showStakeModal());
+    bindClick('btn-show-vote', () => window.showVoteModal());
+    bindClick('btn-do-swap', () => window.executeSwap());
+    bindClick('swap-invert-btn', () => window.invertSwap());
+    bindClick('close-nft-btn', () => window.closeNFTModal());
+    bindClick('close-vote-btn', () => window.closeVoteModal());
+    bindClick('close-stake-btn', () => window.closeStakeModal());
+    bindClick('close-sizing-btn', () => window.closeSizingModal());
+    bindClick('calculate-sizing-btn', () => window.calculateSizing());
+    bindClick('reset-sizing-btn', () => window.resetSizing());
+    bindClick('confirm-sizing-btn', () => window.confirmSizingPurchase());
+    bindClick('close-map-invest-btn', () => window.closeMapInvestModal());
+    bindClick('confirm-map-invest-btn', () => window.confirmMapInvestment());
+    bindClick('close-p2p-btn', () => window.closeP2PModal());
+
+    const swapInput = document.getElementById('swap-input');
+    if (swapInput) swapInput.addEventListener('input', () => window.updateSwapCalculation());
+    const swapFromToken = document.getElementById('swap-from-token');
+    if (swapFromToken) swapFromToken.addEventListener('change', () => window.updateSwapCalculation());
+    const swapToToken = document.getElementById('swap-to-token');
+    if (swapToToken) swapToToken.addEventListener('change', () => window.updateSwapCalculation());
+
+    document.querySelectorAll('.p2p-buy-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const sellerId = btn.getAttribute('data-seller-id');
+        const sellerName = btn.getAttribute('data-seller-name');
+        if (sellerId && sellerName) window.processP2P(sellerId, sellerName);
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Element ? event.target.closest('.map-invest-btn') : null;
+      if (!target) return;
+      const encoded = target.getAttribute('data-target') || '';
+      let name = '';
+      try {
+        name = decodeURIComponent(encoded);
+      } catch (err) {
+        name = encoded;
+      }
+      if (name) window.openMapInvestModal(name);
+    });
+
     window.updateMockBalances('');
     window.loadTxHistory();
     if (window.renderBadges) window.renderBadges();
+    if (window.renderLeaderboard) window.renderLeaderboard();
   });
 })();

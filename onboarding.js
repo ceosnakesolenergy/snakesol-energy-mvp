@@ -1,22 +1,70 @@
-﻿// Lógica de Cadastro Logístico (Sem falsa carteira Web3)
+﻿// Lógica de Cadastro Logístico
+(function setupOnboarding() {
+    'use strict';
 
-        window.handleFullRegistration = function(event) {
-    event.preventDefault();
-    const name = document.getElementById('reg-name').value;
-    
-    // Esconde o funil
-    const funnel = document.getElementById('email-funnel');
-    funnel.style.transition = "opacity 0.5s ease";
-    funnel.style.opacity = "0";
-    setTimeout(() => funnel.style.display = 'none', 500);
+    const sanitizeText = (value) => String(value ?? '').replace(/[<>"'&]/g, '');
 
-    const msg = `📦 Cadastro Logístico Concluído!\n\nOlá, ${name.split(' ')[0]}. Seu endereço físico foi salvo de forma segura para o envio do seu Kit Solar / Wallbox.\n\n🔗 PRÓXIMO PASSO:\nPara interagir com o ecossistema SNAKESOL ENERGY e registrar suas compras na blockchain (Devnet), clique no botão roxo "Conectar Phantom" no topo da página!`;
-    if (window.showToast) {
-        window.showToast(msg, 'success', 10000);
-    } else {
-        alert(msg);
-    }
-    
-    // Rola a página para o topo para incentivar a conexão
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+    const validate = ({ name, phone, email, uc, address }) => {
+        if (name.trim().length < 5) throw new Error('Informe o nome completo.');
+        if (!/^[\d\s\-\+\(\)]+$/.test(phone) || phone.replace(/\D/g, '').length < 10) {
+            throw new Error('Telefone inválido.');
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Email inválido.');
+        if (uc.trim().length < 4) throw new Error('Unidade Consumidora inválida.');
+        if (address.trim().length < 8) throw new Error('Endereço inválido.');
+    };
+
+    window.handleFullRegistration = function(event) {
+        event.preventDefault();
+
+        const payload = {
+            name: sanitizeText(document.getElementById('reg-name')?.value || ''),
+            phone: sanitizeText(document.getElementById('reg-phone')?.value || ''),
+            email: sanitizeText(document.getElementById('reg-email')?.value || ''),
+            uc: sanitizeText(document.getElementById('reg-uc')?.value || ''),
+            address: sanitizeText(document.getElementById('reg-address')?.value || '')
+        };
+
+        try {
+            validate(payload);
+            const sessionProfile = {
+                onboardingCompleted: true,
+                savedAt: new Date().toISOString()
+            };
+            sessionStorage.setItem('snakesol_logistic_profile', JSON.stringify(sessionProfile));
+        } catch (err) {
+            if (window.showToast) {
+                window.showToast(err.message || 'Dados de cadastro inválidos.', 'error');
+            }
+            return;
+        }
+
+        const funnel = document.getElementById('email-funnel');
+        if (funnel) {
+            funnel.style.transition = 'opacity 0.5s ease';
+            funnel.style.opacity = '0';
+            setTimeout(() => { funnel.style.display = 'none'; }, 500);
+        }
+
+        const firstName = payload.name.split(' ')[0] || 'Usuário';
+        const msg = `📦 Cadastro Logístico Concluído!\n\nOlá, ${firstName}. Apenas um resumo mascarado foi salvo nesta sessão para continuidade do onboarding.\n\n🔗 PRÓXIMO PASSO:\nConecte sua Phantom para registrar suas interações na Solana Devnet.`;
+        if (window.showToast) {
+            window.showToast(msg, 'success');
+        } else {
+            alert(msg);
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const bindOnboardingForm = () => {
+        const form = document.getElementById('logistic-form');
+        if (!form || form.dataset.bound === '1') return;
+        form.dataset.bound = '1';
+        form.addEventListener('submit', window.handleFullRegistration);
+    };
+
+    bindOnboardingForm();
+    document.addEventListener('DOMContentLoaded', bindOnboardingForm);
+    window.addEventListener('load', bindOnboardingForm);
+})();
