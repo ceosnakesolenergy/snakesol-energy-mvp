@@ -25,30 +25,30 @@
             </div>
         </div>
         <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-6">
-            <div>
+            <div role="tablist" aria-label="Navegação principal">
                 <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-3">Gestão</p>
-                <button type="button" id="nav-dashboard" data-tab="dashboard" aria-controls="tab-dashboard" aria-selected="true" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button type="button" role="tab" id="nav-dashboard" data-tab="dashboard" aria-controls="tab-dashboard" aria-selected="true" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
                 </button>
-                <button type="button" id="nav-ledger" data-tab="ledger" aria-controls="tab-ledger" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button type="button" role="tab" id="nav-ledger" data-tab="ledger" aria-controls="tab-ledger" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-list-check w-5 text-center"></i> Histórico (Ledger)
                 </button>
             </div>
-            <div>
+            <div role="tablist" aria-label="Navegação ecossistema">
                 <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-3">Ecossistema</p>
-                <button type="button" id="nav-map" data-tab="map" aria-controls="tab-map" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button type="button" role="tab" id="nav-map" data-tab="map" aria-controls="tab-map" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-earth-americas w-5 text-center"></i> Mapa Global
                 </button>
-                <button type="button" id="nav-store" data-tab="store" aria-controls="tab-store" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button type="button" role="tab" id="nav-store" data-tab="store" aria-controls="tab-store" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-store w-5 text-center"></i> Loja de Hardware
                 </button>
-                <button type="button" id="nav-tokens" data-tab="tokens" aria-controls="tab-tokens" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button type="button" role="tab" id="nav-tokens" data-tab="tokens" aria-controls="tab-tokens" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-coins w-5 text-center"></i> DEX SnakeSwap & Tokens
                 </button>
             </div>
-            <div>
+            <div role="tablist" aria-label="Navegação perfil">
                 <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-3">Perfil</p>
-                <button type="button" id="nav-onboarding" data-tab="onboarding" aria-controls="tab-onboarding" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button type="button" role="tab" id="nav-onboarding" data-tab="onboarding" aria-controls="tab-onboarding" aria-selected="false" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-id-card w-5 text-center"></i> Logística & KYC
                 </button>
             </div>
@@ -64,13 +64,13 @@
     </aside>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden relative">
-        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B0F19] border-t border-white/10 z-50 flex justify-between px-1 py-3 pb-safe">
-            <button type="button" id="mob-nav-dashboard" data-tab="dashboard" aria-controls="tab-dashboard" aria-selected="true" class="nav-mobile-item text-[#14F195] flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-chart-pie"></i><span class="text-[9px]">Dashboard</span></button>
-            <button type="button" id="mob-nav-map" data-tab="map" aria-controls="tab-map" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-earth-americas"></i><span class="text-[9px]">Mapa</span></button>
-            <button type="button" id="mob-nav-store" data-tab="store" aria-controls="tab-store" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-store"></i><span class="text-[9px]">Loja</span></button>
-            <button type="button" id="mob-nav-tokens" data-tab="tokens" aria-controls="tab-tokens" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-coins"></i><span class="text-[9px]">Tokens</span></button>
-            <button type="button" id="mob-nav-onboarding" data-tab="onboarding" aria-controls="tab-onboarding" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-id-card"></i><span class="text-[9px]">KYC</span></button>
-            <button type="button" id="mob-nav-ledger" data-tab="ledger" aria-controls="tab-ledger" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-list-check"></i><span class="text-[9px]">Ledger</span></button>
+        <div role="tablist" aria-label="Navegação mobile" class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B0F19] border-t border-white/10 z-50 flex justify-between px-1 py-3 pb-safe">
+            <button type="button" role="tab" id="mob-nav-dashboard" data-tab="dashboard" aria-controls="tab-dashboard" aria-selected="true" class="nav-mobile-item text-[#14F195] flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-chart-pie"></i><span class="text-[9px]">Dashboard</span></button>
+            <button type="button" role="tab" id="mob-nav-map" data-tab="map" aria-controls="tab-map" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-earth-americas"></i><span class="text-[9px]">Mapa</span></button>
+            <button type="button" role="tab" id="mob-nav-store" data-tab="store" aria-controls="tab-store" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-store"></i><span class="text-[9px]">Loja</span></button>
+            <button type="button" role="tab" id="mob-nav-tokens" data-tab="tokens" aria-controls="tab-tokens" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-coins"></i><span class="text-[9px]">Tokens</span></button>
+            <button type="button" role="tab" id="mob-nav-onboarding" data-tab="onboarding" aria-controls="tab-onboarding" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-id-card"></i><span class="text-[9px]">KYC</span></button>
+            <button type="button" role="tab" id="mob-nav-ledger" data-tab="ledger" aria-controls="tab-ledger" aria-selected="false" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-list-check"></i><span class="text-[9px]">Ledger</span></button>
         </div>
 
         <header class="h-[72px] shrink-0 border-b border-white/5 bg-black/20 flex justify-between md:justify-end items-center px-4 md:px-6 relative z-10">
@@ -93,7 +93,7 @@
 
         <main class="flex-1 overflow-y-auto p-4 md:p-8 relative pb-24 md:pb-8">
             <div class="max-w-5xl mx-auto">
-                <div id="tab-dashboard" class="tab-content block animate-[fade-in_0.3s_ease-out]">
+                <div id="tab-dashboard" role="tabpanel" class="tab-content block animate-[fade-in_0.3s_ease-out]">
                     <h2 class="text-2xl font-black mb-6">Dashboard do Produtor</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                         <div class="glass-card rounded-3xl p-6 lg:col-span-2 flex flex-col justify-between relative overflow-hidden">
@@ -141,7 +141,7 @@
                     </div>
                 </div>
 
-                <div id="tab-ledger" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
+                <div id="tab-ledger" role="tabpanel" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
                     <h2 class="text-2xl font-black mb-6">Histórico de Transações</h2>
                     <div class="glass-card rounded-3xl p-6">
                         <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-link text-[#9945FF]"></i> Web3 Transaction Ledger (Devnet)</h3>
@@ -152,7 +152,7 @@
                     </div>
                 </div>
 
-                <div id="tab-map" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
+                <div id="tab-map" role="tabpanel" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
                     <h2 class="text-2xl font-black mb-6">Mapa Global DePIN</h2>
                     <div class="glass-card rounded-3xl p-6 relative z-0">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -164,7 +164,7 @@
                     </div>
                 </div>
 
-                <div id="tab-store" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
+                <div id="tab-store" role="tabpanel" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
                     <h2 class="text-2xl font-black mb-6">Loja de Hardware & Integração</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
@@ -186,7 +186,7 @@
                     </div>
                 </div>
 
-                <div id="tab-tokens" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
+                <div id="tab-tokens" role="tabpanel" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
                     <h2 class="text-2xl font-black mb-6">Tokens e Marketplace</h2>
                     <div class="mb-10">
                         <div class="glass-card rounded-3xl p-6 md:p-8 max-w-lg mx-auto border border-brand-accent/30 relative">
@@ -243,7 +243,7 @@
                     </div>
                 </div>
 
-                <div id="tab-onboarding" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
+                <div id="tab-onboarding" role="tabpanel" class="tab-content hidden animate-[fade-in_0.3s_ease-out]">
                     <h2 class="text-2xl font-black mb-6">Onboarding Logístico & Web3</h2>
                     <div id="email-funnel" class="relative overflow-hidden glass-card rounded-3xl p-8 border-brand-secondary/30 max-w-3xl mx-auto">
                         <div class="relative z-10 flex flex-col gap-6">

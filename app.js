@@ -755,8 +755,12 @@
         SafeDOM.createToast('Selecione tokens diferentes para trocar.', 'warning');
         return;
       }
-      const amountIn = document.getElementById('swap-input').value;
-      window.executeTransaction('Swap ' + amountIn + ' ' + fromToken + ' por $' + toToken + ' na DEX', 'SWAP');
+      try {
+        const amountIn = SecurityValidation.validateDecimal(document.getElementById('swap-input').value, 0, 1000000);
+        window.executeTransaction('Swap ' + amountIn + ' ' + fromToken + ' por $' + toToken + ' na DEX', 'SWAP');
+      } catch (err) {
+        SafeDOM.createToast('Valor de swap inválido', 'error');
+      }
     };
 
     // ========================================================================
@@ -920,12 +924,6 @@
         if (confirmation?.value?.err) {
           throw new Error('Transação rejeitada na confirmação');
         }
-        const statusResponse = await connection.getSignatureStatuses([signature]);
-        const txStatus = statusResponse?.value?.[0];
-        if (!txStatus || txStatus.err || !['confirmed', 'finalized'].includes(txStatus.confirmationStatus || '')) {
-          throw new Error('Falha ao confirmar status final da transação');
-        }
-
         SafeDOM.createToast('⚡ Transação Confirmada na Blockchain!\n\nA transação real foi gravada na Devnet com sucesso.', 'success');
 
         window.addLogEntry(actionName, signature);
