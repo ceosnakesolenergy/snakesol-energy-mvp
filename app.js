@@ -920,6 +920,11 @@
         if (confirmation?.value?.err) {
           throw new Error('Transação rejeitada na confirmação');
         }
+        const statusResponse = await connection.getSignatureStatuses([signature]);
+        const txStatus = statusResponse?.value?.[0];
+        if (!txStatus || txStatus.err || !['confirmed', 'finalized'].includes(txStatus.confirmationStatus || '')) {
+          throw new Error('Falha ao confirmar status final da transação');
+        }
 
         SafeDOM.createToast('⚡ Transação Confirmada na Blockchain!\n\nA transação real foi gravada na Devnet com sucesso.', 'success');
 
