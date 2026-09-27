@@ -127,7 +127,7 @@
         warning: 'text-yellow-400'
       };
 
-      toast.className = `${bgColors[type] || bgColors.success} border rounded-lg p-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] transform transition-all duration-300 translate-y-10 opacity-0 pointer-events-auto max-w-[350px]`;
+      toast.className = `${bgColors[type] || bgColors.success} border rounded-lg p-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] transform transition-all duration-300 translate-y-10 opacity-0 pointer-events-auto`;
       toast.setAttribute('role', 'status');
 
       const row = document.createElement('div');
@@ -532,8 +532,6 @@
     window.confirmSizingPurchase = async function() {
       window.closeSizingModal();
       await window.executeTransaction('Adquirir Kit Solar DePIN (' + currentSizingPrice + ' USDT)');
-      window.mockState.hw += 1;
-      window.updateMockBalances('');
     };
 
     // ========================================================================
@@ -880,17 +878,17 @@
       let hasBadges = false;
 
       if (window.mockState.co2 > 0) {
-        container.innerHTML += '<div class="bg-green-900/40 border border-green-500/30 rounded-lg p-3 flex items-center gap-3 w-full sm:w-[calc(50%-0.5rem)]"><i class="fa-solid fa-leaf text-green-400"></i><span class="text-sm text-green-200">Crédito ESG emitido</span></div>';
+        container.innerHTML += '<div class="bg-green-900/40 border border-green-500/30 rounded-lg p-3 flex items-center gap-3 w-full sm:w-[calc(50%-0.5rem)]"><i class="fa-solid fa-leaf text-green-400 text-lg"></i><div><p class="text-xs text-gray-400">Carbon Neutral</p><p class="text-sm font-bold text-green-400">' + window.mockState.co2.toFixed(1) + ' Kg</p></div></div>';
         hasBadges = true;
       }
 
       if (window.mockState.snake >= 50) {
-        container.innerHTML += '<div class="bg-purple-900/40 border border-purple-500/30 rounded-lg p-3 flex items-center gap-3 w-full sm:w-[calc(50%-0.5rem)]"><i class="fa-solid fa-whale text-purple-400"></i><span class="text-sm text-purple-200">Stake ativo</span></div>';
+        container.innerHTML += '<div class="bg-purple-900/40 border border-purple-500/30 rounded-lg p-3 flex items-center gap-3 w-full sm:w-[calc(50%-0.5rem)]"><i class="fa-solid fa-whale text-purple-400 text-lg"></i><div><p class="text-xs text-gray-400">Whale Holder</p><p class="text-sm font-bold text-purple-400">' + window.mockState.snake + ' $SNAKE</p></div></div>';
         hasBadges = true;
       }
 
       if (window.mockState.hw > 0) {
-        container.innerHTML += '<div class="bg-amber-900/40 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3 w-full sm:w-[calc(50%-0.5rem)]"><i class="fa-solid fa-server text-amber-400"></i><span class="text-sm text-amber-200">Hardware ativo</span></div>';
+        container.innerHTML += '<div class="bg-amber-900/40 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3 w-full sm:w-[calc(50%-0.5rem)]"><i class="fa-solid fa-server text-amber-400 text-lg"></i><div><p class="text-xs text-gray-400">DePIN Operator</p><p class="text-sm font-bold text-amber-400">' + window.mockState.hw + ' Node' + (window.mockState.hw > 1 ? 's' : '') + '</p></div></div>';
         hasBadges = true;
       }
 
