@@ -21,7 +21,7 @@
     },
 
     validateDecimal(value, min = 0, max = 1000000) {
-      const raw = String(value ?? '').trim();
+      const raw = String(value ?? '').trim().replace(',', '.');
       if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error(`Valor inválido`);
       const num = Number.parseFloat(raw);
       if (!Number.isFinite(num)) throw new Error(`Valor inválido`);
@@ -214,6 +214,9 @@
         activeNav.classList.remove('text-gray-400');
         activeNav.classList.add('text-[#14F195]');
       }
+      document.querySelectorAll('.nav-item[data-tab]').forEach((item) => {
+        item.setAttribute('aria-selected', item === activeNav ? 'true' : 'false');
+      });
 
       const mobNavItems = document.querySelectorAll('.nav-mobile-item');
       mobNavItems.forEach((item) => {
@@ -226,6 +229,9 @@
         activeMobNav.classList.remove('text-gray-400');
         activeMobNav.classList.add('text-[#14F195]');
       }
+      document.querySelectorAll('.nav-mobile-item[data-tab]').forEach((item) => {
+        item.setAttribute('aria-selected', item === activeMobNav ? 'true' : 'false');
+      });
     };
 
     function bindClick(id, handler) {
@@ -914,12 +920,7 @@
         if (targetButton) targetButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Confirmando...';
 
         signature = await connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: false });
-        const confirmationBlockhash = signedTransaction.recentBlockhash || latestBlockhash.blockhash;
-        await connection.confirmTransaction({
-          signature,
-          blockhash: confirmationBlockhash,
-          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
-        }, 'confirmed');
+        await connection.confirmTransaction(signature, 'confirmed');
 
         SafeDOM.createToast('⚡ Transação Confirmada na Blockchain!\n\nA transação real foi gravada na Devnet com sucesso.', 'success');
 
