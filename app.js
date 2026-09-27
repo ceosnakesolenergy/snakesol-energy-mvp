@@ -920,7 +920,11 @@
         if (targetButton) targetButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Confirmando...';
 
         signature = await connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: false });
-        await connection.confirmTransaction(signature, 'confirmed');
+        await connection.confirmTransaction({
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
 
         SafeDOM.createToast('⚡ Transação Confirmada na Blockchain!\n\nA transação real foi gravada na Devnet com sucesso.', 'success');
 

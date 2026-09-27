@@ -29,8 +29,8 @@
             validate(payload);
             const normalizedPhone = payload.phone.replace(/\D/g, '');
             const maskedPhone = normalizedPhone.replace(/\d(?=\d{2})/g, '*');
-            const [emailUser, emailDomain = ''] = payload.email.split('@');
-            const maskedEmail = (emailUser ? emailUser.slice(0, 2) : 'xx') + '***@' + emailDomain;
+            const [emailUser] = payload.email.split('@');
+            const maskedEmail = (emailUser ? emailUser.slice(0, 2) : 'xx') + '***@***';
             const sessionProfile = {
                 name: payload.name.split(' ')[0],
                 phoneMasked: maskedPhone,
