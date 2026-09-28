@@ -20,6 +20,12 @@ try {
         $context = $listener.GetContext()
         $request = $context.Request
         $response = $context.Response
+        $response.Headers["X-Content-Type-Options"] = "nosniff"
+        $response.Headers["X-Frame-Options"] = "DENY"
+        $response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        $response.Headers["Cross-Origin-Resource-Policy"] = "same-origin"
+        $response.Headers["Cross-Origin-Opener-Policy"] = "same-origin"
+        $response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
 
         $localPath = $request.Url.LocalPath.TrimStart('/')
         if ($localPath -eq "") { $localPath = "index.html" }
