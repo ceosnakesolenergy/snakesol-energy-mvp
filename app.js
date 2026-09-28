@@ -1038,8 +1038,15 @@
     if (swapTo) swapTo.addEventListener('change', () => window.updateSwapCalculation());
 
     const registrationForm = document.getElementById('registration-form');
-    if (registrationForm && typeof window.handleFullRegistration === 'function') {
-      registrationForm.addEventListener('submit', window.handleFullRegistration);
+    if (registrationForm) {
+      registrationForm.addEventListener('submit', (event) => {
+        if (typeof window.handleFullRegistration === 'function') {
+          window.handleFullRegistration(event);
+        } else {
+          event.preventDefault();
+          SafeDOM.createToast('Formulário ainda não está pronto. Tente novamente.', 'warning');
+        }
+      });
     }
 
     // ========================================================================
