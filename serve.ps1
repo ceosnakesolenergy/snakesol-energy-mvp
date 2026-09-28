@@ -26,6 +26,7 @@ try {
         $response.Headers["Cross-Origin-Resource-Policy"] = "same-origin"
         $response.Headers["Cross-Origin-Opener-Policy"] = "same-origin"
         $response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        $response.Headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://bundle.run https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://api.devnet.solana.com https://api.mainnet-beta.solana.com; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
         $localPath = $request.Url.LocalPath.TrimStart('/')
         if ($localPath -eq "") { $localPath = "index.html" }
