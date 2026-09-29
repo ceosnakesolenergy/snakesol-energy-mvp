@@ -118,7 +118,7 @@ cidadesBrasileiras.forEach((cidade, index) => {
             <div class="text-center p-1 w-36">
                 <b class="text-sm">Eletroposto #${index * 3 + i}</b><br>
                 <span class="text-[10px] text-gray-300">${cidade.nome}</span><br>
-                <button onclick="window.openMapInvestModal('Eletroposto em ${cidade.nome}')" class="mt-2 text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded w-full transition-colors">
+                <button type="button" data-action="open-map-invest-modal" data-map-target="Eletroposto em ${cidade.nome}" class="mt-2 text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded w-full transition-colors">
                     Patrocinar Nó (USDT)
                 </button>
             </div>
@@ -137,7 +137,7 @@ cidadesBrasileiras.forEach((cidade, index) => {
                 <h4 class="font-bold text-lg mb-1">Usina Solar DePIN</h4>
                 <span class="bg-[#14F195]/20 text-[#14F195] text-[10px] px-2 py-0.5 rounded border border-[#14F195]/50 inline-block mb-2">● Gerando Energia</span>
                 <p class="text-[11px] text-gray-300 mb-3">${cidade.nome}<br>Capacidade: ${megawatts} MW</p>
-                <button onclick="window.openMapInvestModal('Usina em ${cidade.nome}')" class="w-full text-xs bg-[#14F195] hover:bg-[#10b981] text-black font-bold px-3 py-2 rounded transition-colors">
+                <button type="button" data-action="open-map-invest-modal" data-map-target="Usina em ${cidade.nome}" class="w-full text-xs bg-[#14F195] hover:bg-[#10b981] text-black font-bold px-3 py-2 rounded transition-colors">
                     Investir (USDT)
                 </button>
             </div>
@@ -165,7 +165,7 @@ usinasEmConstrucao.forEach(usina => {
             <h4 class="font-bold text-lg mb-1">${usina.nome}</h4>
             <span class="bg-orange-500/20 text-orange-400 text-[10px] px-2 py-0.5 rounded border border-orange-500/50 inline-block mb-2">⧗ Em Construção (${usina.prog})</span>
             <p class="text-[11px] text-gray-300 mb-3">Capacidade Prevista: ${usina.cap}</p>
-            <button onclick="window.openMapInvestModal('Construção em ${usina.nome.split('-')[1].trim()}')" class="w-full text-xs bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-2 rounded transition-colors">
+            <button type="button" data-action="open-map-invest-modal" data-map-target="Construção em ${usina.nome.split('-')[1].trim()}" class="w-full text-xs bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-2 rounded transition-colors">
                 Financiar (USDT)
             </button>
         </div>
@@ -185,7 +185,7 @@ eletropostosEmConstrucao.forEach((eletro, idx) => {
             <b class="text-sm">Novo Eletroposto (Obras)</b><br>
             <span class="text-[10px] text-orange-300">${eletro.nome}</span><br>
             <span class="text-[10px] text-gray-400 block mb-2">Fase de Instalação</span>
-            <button onclick="window.openMapInvestModal('Hardware em ${eletro.nome}')" class="mt-2 text-xs bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-1.5 rounded w-full transition-colors">
+            <button type="button" data-action="open-map-invest-modal" data-map-target="Hardware em ${eletro.nome}" class="mt-2 text-xs bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-1.5 rounded w-full transition-colors">
                 Patrocinar Nó (USDT)
             </button>
         </div>

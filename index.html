@@ -5,35 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>SNAKESOLENERGY | Web3 MVP</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            dark: '#0B0F19',
-                            card: 'rgba(255, 255, 255, 0.03)',
-                            accent: '#10B981',
-                            secondary: '#F59E0B',
-                            purple: '#9945FF'
-                        }
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://bundle.run/buffer@6.0.3"></script>
-    <script>
-        window.Buffer = window.Buffer || (window.buffer && window.buffer.Buffer);
-    </script>
-    <script src="https://unpkg.com/@solana/web3.js@1.91.8/lib/index.iife.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; connect-src 'self' https://api.devnet.solana.com https://api.mainnet-beta.solana.com; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+    <link rel="stylesheet" href="assets/css/tailwind.css">
+    <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <script src="assets/vendor/buffer/buffer.iife.js"></script>
+    <script src="buffer-init.js"></script>
+    <script src="assets/vendor/solana/solana-web3.iife.min.js"></script>
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
 </head>
 <body class="h-screen w-full flex overflow-hidden bg-[#0B0F19] text-white">
     <aside class="w-64 h-full border-r border-white/5 bg-black/40 flex-col shrink-0 hidden md:flex z-50">
@@ -49,28 +28,28 @@
         <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-6">
             <div>
                 <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-3">Gestão</p>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button data-tab="dashboard" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
                 </button>
-                <button onclick="switchTab('ledger')" id="nav-ledger" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button data-tab="ledger" id="nav-ledger" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-list-check w-5 text-center"></i> Histórico (Ledger)
                 </button>
             </div>
             <div>
                 <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-3">Ecossistema</p>
-                <button onclick="switchTab('map')" id="nav-map" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button data-tab="map" id="nav-map" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-earth-americas w-5 text-center"></i> Mapa Global
                 </button>
-                <button onclick="switchTab('store')" id="nav-store" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button data-tab="store" id="nav-store" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-store w-5 text-center"></i> Loja de Hardware
                 </button>
-                <button onclick="switchTab('tokens')" id="nav-tokens" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button data-tab="tokens" id="nav-tokens" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-coins w-5 text-center"></i> DEX SnakeSwap & Tokens
                 </button>
             </div>
             <div>
                 <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 px-3">Perfil</p>
-                <button onclick="switchTab('onboarding')" id="nav-onboarding" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
+                <button data-tab="onboarding" id="nav-onboarding" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 text-left">
                     <i class="fa-solid fa-id-card w-5 text-center"></i> Logística & KYC
                 </button>
             </div>
@@ -87,12 +66,12 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden relative">
         <div class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B0F19] border-t border-white/10 z-50 flex justify-between px-1 py-3 pb-safe">
-            <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="nav-mobile-item text-[#14F195] flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-chart-pie"></i><span class="text-[9px]">Dashboard</span></button>
-            <button onclick="switchTab('map')" id="mob-nav-map" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-earth-americas"></i><span class="text-[9px]">Mapa</span></button>
-            <button onclick="switchTab('store')" id="mob-nav-store" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-store"></i><span class="text-[9px]">Loja</span></button>
-            <button onclick="switchTab('tokens')" id="mob-nav-tokens" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-coins"></i><span class="text-[9px]">Tokens</span></button>
-            <button onclick="switchTab('onboarding')" id="mob-nav-onboarding" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-id-card"></i><span class="text-[9px]">KYC</span></button>
-            <button onclick="switchTab('ledger')" id="mob-nav-ledger" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-list-check"></i><span class="text-[9px]">Ledger</span></button>
+            <button data-tab="dashboard" id="mob-nav-dashboard" class="nav-mobile-item text-[#14F195] flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-chart-pie"></i><span class="text-[9px]">Dashboard</span></button>
+            <button data-tab="map" id="mob-nav-map" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-earth-americas"></i><span class="text-[9px]">Mapa</span></button>
+            <button data-tab="store" id="mob-nav-store" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-store"></i><span class="text-[9px]">Loja</span></button>
+            <button data-tab="tokens" id="mob-nav-tokens" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-coins"></i><span class="text-[9px]">Tokens</span></button>
+            <button data-tab="onboarding" id="mob-nav-onboarding" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-id-card"></i><span class="text-[9px]">KYC</span></button>
+            <button data-tab="ledger" id="mob-nav-ledger" class="nav-mobile-item text-gray-400 flex flex-col items-center gap-1 flex-1"><i class="fa-solid fa-list-check"></i><span class="text-[9px]">Ledger</span></button>
         </div>
 
         <header class="h-[72px] shrink-0 border-b border-white/5 bg-black/20 flex justify-between md:justify-end items-center px-4 md:px-6 relative z-10">
@@ -105,7 +84,7 @@
                     <div class="text-[11px] font-black text-brand-accent text-center mt-[-6px]">ENERGY</div>
                 </div>
             </div>
-            <button id="connect-wallet-btn" onclick="window.connectPhantom()" class="bg-[#9945FF] hover:bg-[#8338e3] text-white px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2">
+            <button id="connect-wallet-btn" data-action="connect-wallet" class="bg-[#9945FF] hover:bg-[#8338e3] text-white px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2">
                 <i id="phantom-logo-icon" class="fa-solid fa-wallet text-lg"></i>
                 <img id="phantom-logo-img" src="" class="w-5 h-5 hidden">
                 <span id="connect-text">Conectar Phantom</span>
@@ -140,7 +119,7 @@
                                 <p class="text-sm text-gray-400 mb-4">Seu impacto ecológico na rede.</p>
                                 <div class="bg-black/40 rounded-xl p-3 border border-white/5 flex justify-between items-center mb-4"><span class="text-xs text-gray-400">CO2 Evitado:</span><span id="user-co2" class="font-bold text-brand-accent text-lg">0 Kg</span></div>
                             </div>
-                            <button onclick="window.executeTransaction('Emitir NFT de Crédito de Carbono')" class="w-full btn-neon-green bg-brand-accent text-white py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2">Emitir Certificado Verde <i class="fa-solid fa-certificate"></i></button>
+                            <button data-action="execute-transaction" data-tx-action="Emitir NFT de Crédito de Carbono" class="w-full btn-neon-green bg-brand-accent text-white py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2">Emitir Certificado Verde <i class="fa-solid fa-certificate"></i></button>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -195,7 +174,7 @@
                                 <h4 class="text-lg font-bold">Smart Gateway & Kits Solares</h4>
                                 <p class="text-sm text-gray-400 mt-2 mb-6">Já tem placa solar? Instale nosso Gateway IoT. Não tem nada? Adquira nosso Kit.</p>
                             </div>
-                            <button onclick="window.openSizingModal()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl text-sm font-bold transition-all flex justify-center items-center gap-2"><span>Adquirir Hardware (≈ 5.0 SOL)</span><i class="fa-solid fa-calculator"></i></button>
+                            <button data-action="open-sizing-modal" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl text-sm font-bold transition-all flex justify-center items-center gap-2"><span>Adquirir Hardware (≈ 5.0 SOL)</span><i class="fa-solid fa-calculator"></i></button>
                         </div>
                         <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
                             <div>
@@ -203,7 +182,7 @@
                                 <h4 class="text-lg font-bold">Carregadores VE (Wallbox)</h4>
                                 <p class="text-sm text-gray-400 mt-2 mb-6">Instale um Wallbox SNAKESOL na sua garagem ou comércio.</p>
                             </div>
-                            <button onclick="window.executeTransaction('Comprar Carregador VE')" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl text-sm font-bold transition-all flex justify-center items-center gap-2"><span>Comprar Wallbox (≈ 8.0 SOL)</span><i class="fa-solid fa-car-battery"></i></button>
+                            <button data-action="execute-transaction" data-tx-action="Comprar Carregador VE" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl text-sm font-bold transition-all flex justify-center items-center gap-2"><span>Comprar Wallbox (≈ 8.0 SOL)</span><i class="fa-solid fa-car-battery"></i></button>
                         </div>
                     </div>
                 </div>
@@ -216,9 +195,9 @@
                             <div class="bg-black/40 rounded-2xl p-4 border border-white/5 focus-within:border-brand-accent/50 transition-colors">
                                 <div class="flex justify-between text-xs text-gray-400 mb-2"><span>Pagar</span><span>Saldo: <span id="dex-from-balance">1.50</span> <span id="dex-from-lbl">SOL</span></span></div>
                                 <div class="flex justify-between items-center">
-                                    <input type="number" id="swap-input" value="0.1" class="bg-transparent text-2xl font-bold w-1/2 outline-none text-white" step="0.01" oninput="window.updateSwapCalculation()">
+                                    <input type="number" id="swap-input" value="0.1" class="bg-transparent text-2xl font-bold w-1/2 outline-none text-white" step="0.01" >
                                     <div class="flex items-center bg-white/10 rounded-xl px-2 py-1 relative">
-                                        <select id="swap-from-token" onchange="window.updateSwapCalculation()" class="bg-transparent text-white font-bold text-sm outline-none cursor-pointer appearance-none pr-5">
+                                        <select id="swap-from-token"  class="bg-transparent text-white font-bold text-sm outline-none cursor-pointer appearance-none pr-5">
                                             <option value="SOL" class="text-black">◎ SOL</option>
                                             <option value="ENERGY" class="text-black">⚡ ENERGY</option>
                                             <option value="SNAKE" class="text-black">🐍 SNAKE</option>
@@ -227,13 +206,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex justify-center -my-3 relative z-10"><div onclick="window.invertSwap()" class="w-10 h-10 bg-[#121212] rounded-full border border-white/10 flex items-center justify-center text-brand-accent hover:bg-white/10 cursor-pointer"><i class="fa-solid fa-right-left rotate-90"></i></div></div>
+                            <div class="flex justify-center -my-3 relative z-10"><button type="button" data-action="invert-swap" class="w-10 h-10 bg-[#121212] rounded-full border border-white/10 flex items-center justify-center text-brand-accent hover:bg-white/10 cursor-pointer"><i class="fa-solid fa-right-left rotate-90"></i></button></div>
                             <div class="bg-black/40 rounded-2xl p-4 mb-6 border border-white/5">
                                 <div class="flex justify-between text-xs text-gray-400 mb-2"><span>Receber (Estimativa)</span></div>
                                 <div class="flex justify-between items-center">
                                     <input type="number" id="swap-output" value="95.00" readonly class="bg-transparent text-2xl font-bold w-1/2 outline-none text-brand-secondary">
                                     <div class="flex items-center bg-brand-secondary/20 rounded-xl px-2 py-1 relative">
-                                        <select id="swap-to-token" onchange="window.updateSwapCalculation()" class="bg-transparent text-brand-secondary font-bold text-sm outline-none cursor-pointer appearance-none pr-5">
+                                        <select id="swap-to-token"  class="bg-transparent text-brand-secondary font-bold text-sm outline-none cursor-pointer appearance-none pr-5">
                                             <option value="ENERGY" class="text-black">⚡ ENERGY</option>
                                             <option value="SOL" class="text-black">◎ SOL</option>
                                             <option value="SNAKE" class="text-black">🐍 SNAKE</option>
@@ -242,7 +221,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button id="btn-do-swap" onclick="window.executeSwap()" class="w-full btn-neon-green bg-brand-accent text-black py-4 rounded-xl font-black text-lg hover:bg-[#14F195]/80 transition-all flex justify-center items-center gap-2">Fazer Swap (Devnet)</button>
+                            <button id="btn-do-swap" data-action="execute-swap" class="w-full btn-neon-green bg-brand-accent text-black py-4 rounded-xl font-black text-lg hover:bg-[#14F195]/80 transition-all flex justify-center items-center gap-2">Fazer Swap (Devnet)</button>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -250,16 +229,16 @@
                             <div class="flex items-center gap-4 mb-6"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg"><i class="fa-solid fa-bolt text-2xl text-white"></i></div><div><h2 class="text-3xl font-black">$ENERGY</h2><p class="text-brand-secondary font-medium">Utility Token (1:1 kWh)</p></div></div>
                             <p class="text-gray-300 text-sm mb-8 leading-relaxed">Token lastreado fisicamente na energia solar.</p>
                             <div class="space-y-3">
-                                <button onclick="window.showP2PModal()" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-cart-shopping mr-2 text-brand-secondary"></i> Comprar P2P</span><i class="fa-solid fa-arrow-right"></i></button>
-                                <button onclick="window.executeTransaction('Pagar Recarga VE com $ENERGY')" class="w-full btn-neon-green bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-charging-station mr-2"></i> Pagar Recarga</span><i class="fa-solid fa-bolt"></i></button>
+                                <button data-action="show-p2p-modal" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-cart-shopping mr-2 text-brand-secondary"></i> Comprar P2P</span><i class="fa-solid fa-arrow-right"></i></button>
+                                <button data-action="execute-transaction" data-tx-action="Pagar Recarga VE com $ENERGY" class="w-full btn-neon-green bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-charging-station mr-2"></i> Pagar Recarga</span><i class="fa-solid fa-bolt"></i></button>
                             </div>
                         </div>
                         <div class="glass-card rounded-3xl p-8 relative overflow-hidden group border-brand-accent/30">
                             <div class="flex items-center gap-4 mb-6"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg"><i class="fa-solid fa-chart-line text-2xl text-white"></i></div><div><h2 class="text-3xl font-black">$SNAKE</h2><p class="text-brand-accent font-medium">Governance & Value Token</p></div></div>
                             <p class="text-gray-300 text-sm mb-8 leading-relaxed">O coração financeiro do projeto.</p>
                             <div class="space-y-3">
-                                <button onclick="window.showStakeModal()" class="w-full bg-brand-accent/20 hover:bg-brand-accent/30 border border-brand-accent/50 text-brand-accent py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-lock mr-2"></i> Travar (Stake) $SNAKE</span><span class="text-xs bg-brand-accent text-white px-2 py-1 rounded">Ganhe 15% APY</span></button>
-                                <button onclick="window.showVoteModal()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-check-to-slot mr-2"></i> Votar em Nova Usina</span><i class="fa-solid fa-arrow-right"></i></button>
+                                <button data-action="show-stake-modal" class="w-full bg-brand-accent/20 hover:bg-brand-accent/30 border border-brand-accent/50 text-brand-accent py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-lock mr-2"></i> Travar (Stake) $SNAKE</span><span class="text-xs bg-brand-accent text-white px-2 py-1 rounded">Ganhe 15% APY</span></button>
+                                <button data-action="show-vote-modal" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 py-3 px-4 rounded-xl font-bold flex justify-between items-center"><span><i class="fa-solid fa-check-to-slot mr-2"></i> Votar em Nova Usina</span><i class="fa-solid fa-arrow-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -274,7 +253,7 @@
                                 <p class="text-gray-300 text-sm leading-relaxed">Preencha seus dados físicos para o envio dos equipamentos.</p>
                             </div>
                             <div>
-                                <form onsubmit="handleFullRegistration(event)" class="flex flex-col gap-3">
+                                <form id="registration-form" class="flex flex-col gap-3">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div class="relative"><div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fa-solid fa-user text-gray-500"></i></div><input type="text" id="reg-name" placeholder="Nome Completo" required class="w-full bg-black/40 border border-white/20 rounded-xl pl-11 pr-4 py-3 text-white placeholder:text-gray-500"></div>
                                         <div class="relative"><div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fa-solid fa-phone text-gray-500"></i></div><input type="tel" id="reg-phone" placeholder="WhatsApp / Celular" required class="w-full bg-black/40 border border-white/20 rounded-xl pl-11 pr-4 py-3 text-white placeholder:text-gray-500"></div>
@@ -293,41 +272,19 @@
     </div>
 
     <div id="nft-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div class="relative bg-[#0B0F19] border border-brand-accent/40 rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-[0_0_50px_rgba(16,185,129,0.3)] transform scale-95 transition-transform duration-300">
+        <div id="nft-modal-content" class="relative bg-[#0B0F19] border border-brand-accent/40 rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-[0_0_50px_rgba(16,185,129,0.3)] transform scale-95 transition-transform duration-300">
             <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"><div class="absolute -inset-[100%] bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent animate-[spin_4s_linear_infinite]"></div></div>
             <div class="relative z-10">
                 <div class="text-brand-accent text-5xl mb-4 animate-bounce"><i class="fa-solid fa-microchip"></i></div>
                 <h2 class="text-2xl font-black text-white tracking-tight mb-2 uppercase">Gênesis Node NFT</h2>
                 <p class="text-sm text-gray-400 mb-6">Parabéns! Sua prova de participação na rede foi cunhada na Solana.</p>
                 <div class="w-full h-48 bg-black rounded-xl border border-white/10 flex items-center justify-center mb-6 relative overflow-hidden group"><div class="absolute inset-0 bg-gradient-to-tr from-[#9945FF]/30 to-[#14F195]/30 mix-blend-overlay"></div><img src="logo-snake-purple.jpg" class="w-24 h-24 rounded-full object-cover border-2 border-[#14F195] shadow-[0_0_20px_#14F195] group-hover:scale-110 transition-transform duration-300"><div class="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-[10px] text-white font-mono border border-white/20">Edição #<span id="nft-edition">---</span></div></div>
-                <button onclick="closeNFTModal()" class="w-full bg-brand-accent hover:bg-[#10b981] text-black font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(20,241,149,0.4)]">Coletar Recompensa</button>
+                <button data-action="close-nft-modal" class="w-full bg-brand-accent hover:bg-[#10b981] text-black font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(20,241,149,0.4)]">Coletar Recompensa</button>
             </div>
         </div>
     </div>
 
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
-
-    <script>
-        function switchTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach((tab) => { tab.classList.remove('block'); tab.classList.add('hidden'); });
-            const target = document.getElementById('tab-' + tabId);
-            if (target) { target.classList.remove('hidden'); target.classList.add('block'); }
-            if (tabId === 'map') {
-                setTimeout(() => {
-                    if (window.map) window.map.invalidateSize();
-                }, 100);
-            }
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach((item) => { item.classList.remove('active', 'text-[#14F195]'); item.classList.add('text-gray-400'); });
-            const activeNav = document.getElementById('nav-' + tabId);
-            if (activeNav) { activeNav.classList.add('active'); activeNav.classList.remove('text-gray-400'); activeNav.classList.add('text-[#14F195]'); }
-            const mobNavItems = document.querySelectorAll('.nav-mobile-item');
-            mobNavItems.forEach((item) => { item.classList.remove('text-[#14F195]'); item.classList.add('text-gray-400'); });
-            const activeMobNav = document.getElementById('mob-nav-' + tabId);
-            if (activeMobNav) { activeMobNav.classList.remove('text-gray-400'); activeMobNav.classList.add('text-[#14F195]'); }
-        }
-    </script>
     <script src="map.js?v=35"></script>
     <script src="onboarding.js?v=36"></script>
     <script src="mock.js?v=36"></script>
@@ -335,7 +292,7 @@
     <!-- Vote Modal -->
     <div id="vote-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div id="vote-modal-content" class="relative bg-[#0B0F19] border border-[#9945FF]/40 rounded-2xl p-6 md:p-8 max-w-md w-full mx-4 shadow-[0_0_50px_rgba(153,69,255,0.2)] transform scale-95 transition-transform duration-300">
-            <button onclick="window.closeVoteModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
+            <button data-action="close-vote-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
             <div class="text-center mb-6"><div class="w-16 h-16 rounded-full bg-[#9945FF]/20 flex items-center justify-center mx-auto mb-4 border border-[#9945FF]/50"><i class="fa-solid fa-check-to-slot text-3xl text-[#9945FF]"></i></div><h3 class="text-2xl font-black mb-2">Governança DAO</h3><p class="text-sm text-gray-400">Decida onde a SnakeSol Energy deve instalar a próxima Micro Usina Solar.</p></div>
             <div class="space-y-3 mb-6">
                 <label class="flex items-center gap-3 p-4 rounded-xl border border-white/10 hover:border-[#9945FF]/50 bg-white/5 cursor-pointer transition-colors group"><input type="radio" name="dao-vote" value="São Paulo/SP" class="w-4 h-4 text-[#9945FF] focus:ring-[#9945FF] bg-black border-gray-600" checked><div class="flex-1"><p class="font-bold text-white group-hover:text-[#9945FF] transition-colors">São Paulo - SP</p><p class="text-xs text-gray-400">Alta demanda industrial</p></div></label>
@@ -343,22 +300,22 @@
                 <label class="flex items-center gap-3 p-4 rounded-xl border border-white/10 hover:border-[#9945FF]/50 bg-white/5 cursor-pointer transition-colors group"><input type="radio" name="dao-vote" value="Sertão Nordestino" class="w-4 h-4 text-[#9945FF] focus:ring-[#9945FF] bg-black border-gray-600"><div class="flex-1"><p class="font-bold text-white group-hover:text-[#9945FF] transition-colors">Sertão Nordestino</p><p class="text-xs text-gray-400">Máxima Insolação</p></div></label>
             </div>
             <div class="mb-6"><p class="text-xs text-gray-400 mb-2">Peso do Voto (Alocação de $SNAKE):</p><div class="bg-black/40 rounded-xl p-3 border border-white/5 flex items-center justify-between focus-within:border-[#9945FF]/50 transition-colors"><input type="number" id="vote-weight" value="500" class="bg-transparent text-xl font-bold w-1/2 outline-none text-white" step="10" min="1"><span class="text-sm font-bold text-[#9945FF]">$SNAKE</span></div></div>
-            <button onclick="window.submitVote()" id="submit-vote-btn" class="w-full bg-gradient-to-r from-[#9945FF] to-[#7928CA] text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all">Assinar Voto na Blockchain</button>
+            <button data-action="submit-vote" id="submit-vote-btn" class="w-full bg-gradient-to-r from-[#9945FF] to-[#7928CA] text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all">Assinar Voto na Blockchain</button>
         </div>
     </div>
 
     <div id="stake-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div id="stake-modal-content" class="relative bg-[#0B0F19] border border-brand-accent/40 rounded-2xl p-6 md:p-8 max-w-sm w-full mx-4 shadow-[0_0_50px_rgba(20,241,149,0.2)] transform scale-95 transition-transform duration-300">
-            <button onclick="window.closeStakeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
+            <button data-action="close-stake-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
             <div class="text-center mb-6"><div class="w-16 h-16 rounded-full bg-brand-accent/20 flex items-center justify-center mx-auto mb-4 border border-brand-accent/50"><i class="fa-solid fa-lock text-3xl text-brand-accent"></i></div><h3 class="text-2xl font-black mb-2">Stake $SNAKE</h3><p class="text-sm text-gray-400">Trave seus tokens para ganhar 15% APY e poder de voto na Governança DAO.</p></div>
             <div class="mb-6"><p class="text-xs text-gray-400 mb-2">Quantidade para travar:</p><div class="bg-black/40 rounded-xl p-3 border border-white/5 flex items-center justify-between focus-within:border-brand-accent/50 transition-colors"><input type="number" id="stake-amount" value="50" class="bg-transparent text-2xl font-bold w-1/2 outline-none text-white" step="1" min="1"><span class="text-sm font-bold text-brand-accent">$SNAKE</span></div><div class="flex justify-end mt-2"><span class="text-xs text-gray-500">Estimativa de ganhos: <span id="stake-apy-preview" class="text-brand-accent font-bold">7.5</span> / ano</span></div></div>
-            <button onclick="window.submitStake()" id="submit-stake-btn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all">Confirmar Stake</button>
+            <button data-action="submit-stake" id="submit-stake-btn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all">Confirmar Stake</button>
         </div>
     </div>
 
     <div id="sizing-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div id="sizing-modal-content" class="relative bg-[#0B0F19] border border-yellow-500/40 rounded-2xl p-6 md:p-8 max-w-lg w-full mx-4 shadow-[0_0_50px_rgba(234,179,8,0.2)] transform scale-95 transition-transform duration-300">
-            <button onclick="window.closeSizingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button data-action="close-sizing-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 class="text-2xl font-black mb-1 flex items-center gap-2"><i class="fa-solid fa-solar-panel text-yellow-400"></i> Projetar Kit Solar</h3>
             <p class="text-sm text-gray-400 mb-6 border-b border-white/10 pb-4">Personalize seu sistema DePIN de acordo com o consumo real da sua residência ou empresa.</p>
             <div id="sizing-step-1" class="block">
@@ -368,7 +325,7 @@
                     <div><label class="text-xs text-gray-400 uppercase tracking-wider block mb-1">Consumo Extra ou Outro Imóvel (kWh)</label><input type="number" id="sizing-extra" value="0" min="0" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white font-mono focus:border-yellow-500 outline-none"></div>
                     <div class="flex items-center gap-3 bg-black/30 p-3 rounded-lg border border-white/5"><input type="checkbox" id="sizing-pool" class="w-5 h-5 accent-yellow-500 cursor-pointer"><label for="sizing-pool" class="text-sm text-gray-300 cursor-pointer">Aquecimento de Piscina (+250 kWh/mês)</label></div>
                 </div>
-                <button onclick="window.calculateSizing()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-xl text-lg font-black transition-all flex justify-center items-center gap-2">Calcular Projeto</button>
+                <button data-action="calculate-sizing" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-xl text-lg font-black transition-all flex justify-center items-center gap-2">Calcular Projeto</button>
             </div>
             <div id="sizing-step-2" class="hidden">
                 <div class="bg-black/50 p-5 rounded-xl border border-white/10 mb-6">
@@ -379,29 +336,29 @@
                     <div class="mt-4 pt-4 border-t border-white/10"><p class="text-xs text-gray-400 uppercase mb-1">Kit Recomendado</p><p id="res-total" class="text-3xl font-black text-yellow-400 font-mono">0 kWh <span class="text-sm font-normal text-gray-500">/ mês</span></p></div>
                     <div class="mt-4"><p class="text-xs text-gray-400 uppercase mb-1">Custo Total de Instalação</p><p id="res-price" class="text-2xl font-black text-[#14F195] font-mono">0 USDT</p></div>
                 </div>
-                <div class="flex gap-3"><button onclick="window.resetSizing()" class="w-1/3 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-3 rounded-xl text-sm font-bold transition-all">Refazer</button><button onclick="window.confirmSizingPurchase()" class="w-2/3 bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-xl text-lg font-black transition-all flex justify-center items-center gap-2">Adquirir Kit</button></div>
+                <div class="flex gap-3"><button data-action="reset-sizing" class="w-1/3 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-3 rounded-xl text-sm font-bold transition-all">Refazer</button><button data-action="confirm-sizing-purchase" class="w-2/3 bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-xl text-lg font-black transition-all flex justify-center items-center gap-2">Adquirir Kit</button></div>
             </div>
         </div>
     </div>
 
     <div id="map-invest-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div id="map-invest-modal-content" class="relative bg-[#0B0F19] border border-[#14F195]/40 rounded-2xl p-6 md:p-8 max-w-sm w-full mx-4 shadow-[0_0_50px_rgba(20,241,149,0.2)] transform scale-95 transition-transform duration-300">
-            <button onclick="window.closeMapInvestModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button data-action="close-map-invest-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h3 class="text-2xl font-black mb-1 flex items-center gap-2"><i class="fa-solid fa-building-columns text-[#14F195]"></i> Investir</h3>
             <p id="map-invest-target" class="text-sm text-gray-400 mb-6 font-mono border-b border-white/10 pb-4">Alvo: Usina Solar</p>
             <div class="bg-black/50 p-4 rounded-xl border border-white/5 mb-6"><label class="text-xs text-gray-400 uppercase tracking-wider block mb-2">Valor do Investimento</label><div class="relative"><input type="number" id="map-invest-amount" value="500" min="10" step="10" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white font-mono text-xl outline-none"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">USDT</span></div><p class="text-[10px] text-[#14F195] mt-2 leading-relaxed"><i class="fa-solid fa-circle-info"></i> O investimento financia a infraestrutura física e rende Yield constante.</p></div>
-            <button onclick="window.confirmMapInvestment()" class="w-full bg-[#14F195] hover:bg-[#10b981] text-black py-3 rounded-xl text-lg font-black transition-all flex justify-center items-center gap-2">Aprovar Pagamento</button>
+            <button data-action="confirm-map-investment" class="w-full bg-[#14F195] hover:bg-[#10b981] text-black py-3 rounded-xl text-lg font-black transition-all flex justify-center items-center gap-2">Aprovar Pagamento</button>
         </div>
     </div>
 
     <div id="p2p-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div id="p2p-modal-content" class="relative bg-[#0B0F19] border border-brand-secondary/40 rounded-2xl p-6 md:p-8 max-w-lg w-full mx-4 shadow-[0_0_50px_rgba(245,158,11,0.2)] transform scale-95 transition-transform duration-300">
-            <button onclick="window.closeP2PModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
+            <button data-action="close-p2p-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
             <div class="text-center mb-6"><div class="w-16 h-16 rounded-full bg-brand-secondary/20 flex items-center justify-center mx-auto mb-4 border border-brand-secondary/50"><i class="fa-solid fa-cart-shopping text-3xl text-brand-secondary"></i></div><h3 class="text-2xl font-black mb-2">Mercado Livre P2P</h3><p class="text-sm text-gray-400">Compre kWh diretamente de outros produtores da rede.</p></div>
             <div class="space-y-3 mb-6 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
-                <div class="bg-black/40 rounded-xl p-4 border border-white/5 hover:border-brand-secondary/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"><div><div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-user-circle text-gray-400"></i><span class="font-bold text-sm text-white">SolarFazenda_BR</span><i class="fa-solid fa-certificate text-brand-accent text-xs" title="Produtor Verificado"></i></div><p class="text-xs text-gray-500">Disponível: <span class="text-white font-bold" id="p2p-avail-solarfazenda">1500</span> kWh</p></div><div class="flex flex-col items-end w-full sm:w-auto"><span class="font-black text-brand-secondary mb-2">0.08 SOL/kWh</span><div class="flex items-center gap-2 w-full sm:w-auto"><input type="number" id="p2p-input-solarfazenda" class="w-full sm:w-24 bg-black/60 border border-white/10 rounded-lg px-2 py-1 text-sm text-white focus:outline-none focus:border-brand-secondary" min="1"><button onclick="window.processP2P('solarfazenda', 'SolarFazenda_BR')" class="text-xs bg-brand-secondary/20 hover:bg-brand-secondary text-brand-secondary hover:text-white px-3 py-2 rounded-lg font-bold">Comprar</button></div></div></div>
-                <div class="bg-black/40 rounded-xl p-4 border border-white/5 hover:border-brand-secondary/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"><div><div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-user-circle text-gray-400"></i><span class="font-bold text-sm text-white">Pedro_EnergiaLimpa</span></div><p class="text-xs text-gray-500">Disponível: <span class="text-white font-bold" id="p2p-avail-pedro">300</span> kWh</p></div><div class="flex flex-col items-end w-full sm:w-auto"><span class="font-black text-brand-secondary mb-2">0.09 SOL/kWh</span><div class="flex items-center gap-2 w-full sm:w-auto"><input type="number" id="p2p-input-pedro" class="w-full sm:w-24 bg-black/60 border border-white/10 rounded-lg px-2 py-1 text-sm text-white focus:outline-none focus:border-brand-secondary" min="1"><button onclick="window.processP2P('pedro', 'Pedro_EnergiaLimpa')" class="text-xs bg-brand-secondary/20 hover:bg-brand-secondary text-brand-secondary hover:text-white px-3 py-2 rounded-lg font-bold">Comprar</button></div></div></div>
-                <div class="bg-black/40 rounded-xl p-4 border border-white/5 hover:border-brand-secondary/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"><div><div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-user-circle text-gray-400"></i><span class="font-bold text-sm text-white">CondominioSolar_SP</span><i class="fa-solid fa-certificate text-brand-accent text-xs" title="Produtor Verificado"></i></div><p class="text-xs text-gray-500">Disponível: <span class="text-white font-bold" id="p2p-avail-condominio">5000</span> kWh</p></div><div class="flex flex-col items-end w-full sm:w-auto"><span class="font-black text-brand-secondary mb-2">0.075 SOL/kWh</span><div class="flex items-center gap-2 w-full sm:w-auto"><input type="number" id="p2p-input-condominio" class="w-full sm:w-24 bg-black/60 border border-white/10 rounded-lg px-2 py-1 text-sm text-white focus:outline-none focus:border-brand-secondary" min="1"><button onclick="window.processP2P('condominio', 'CondominioSolar_SP')" class="text-xs bg-brand-secondary/20 hover:bg-brand-secondary text-brand-secondary hover:text-white px-3 py-2 rounded-lg font-bold">Comprar</button></div></div></div>
+                <div class="bg-black/40 rounded-xl p-4 border border-white/5 hover:border-brand-secondary/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"><div><div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-user-circle text-gray-400"></i><span class="font-bold text-sm text-white">SolarFazenda_BR</span><i class="fa-solid fa-certificate text-brand-accent text-xs" title="Produtor Verificado"></i></div><p class="text-xs text-gray-500">Disponível: <span class="text-white font-bold" id="p2p-avail-solarfazenda">1500</span> kWh</p></div><div class="flex flex-col items-end w-full sm:w-auto"><span class="font-black text-brand-secondary mb-2">0.08 SOL/kWh</span><div class="flex items-center gap-2 w-full sm:w-auto"><input type="number" id="p2p-input-solarfazenda" aria-label="Quantidade de kWh para comprar de SolarFazenda_BR" class="w-full sm:w-24 bg-black/60 border border-white/10 rounded-lg px-2 py-1 text-sm text-white focus:outline-none focus:border-brand-secondary" min="1"><button data-action="process-p2p" data-seller-id="solarfazenda" data-seller-name="SolarFazenda_BR" class="text-xs bg-brand-secondary/20 hover:bg-brand-secondary text-brand-secondary hover:text-white px-3 py-2 rounded-lg font-bold">Comprar</button></div></div></div>
+                <div class="bg-black/40 rounded-xl p-4 border border-white/5 hover:border-brand-secondary/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"><div><div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-user-circle text-gray-400"></i><span class="font-bold text-sm text-white">Pedro_EnergiaLimpa</span></div><p class="text-xs text-gray-500">Disponível: <span class="text-white font-bold" id="p2p-avail-pedro">300</span> kWh</p></div><div class="flex flex-col items-end w-full sm:w-auto"><span class="font-black text-brand-secondary mb-2">0.09 SOL/kWh</span><div class="flex items-center gap-2 w-full sm:w-auto"><input type="number" id="p2p-input-pedro" aria-label="Quantidade de kWh para comprar de Pedro_EnergiaLimpa" class="w-full sm:w-24 bg-black/60 border border-white/10 rounded-lg px-2 py-1 text-sm text-white focus:outline-none focus:border-brand-secondary" min="1"><button data-action="process-p2p" data-seller-id="pedro" data-seller-name="Pedro_EnergiaLimpa" class="text-xs bg-brand-secondary/20 hover:bg-brand-secondary text-brand-secondary hover:text-white px-3 py-2 rounded-lg font-bold">Comprar</button></div></div></div>
+                <div class="bg-black/40 rounded-xl p-4 border border-white/5 hover:border-brand-secondary/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"><div><div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-user-circle text-gray-400"></i><span class="font-bold text-sm text-white">CondominioSolar_SP</span><i class="fa-solid fa-certificate text-brand-accent text-xs" title="Produtor Verificado"></i></div><p class="text-xs text-gray-500">Disponível: <span class="text-white font-bold" id="p2p-avail-condominio">5000</span> kWh</p></div><div class="flex flex-col items-end w-full sm:w-auto"><span class="font-black text-brand-secondary mb-2">0.075 SOL/kWh</span><div class="flex items-center gap-2 w-full sm:w-auto"><input type="number" id="p2p-input-condominio" aria-label="Quantidade de kWh para comprar de CondominioSolar_SP" class="w-full sm:w-24 bg-black/60 border border-white/10 rounded-lg px-2 py-1 text-sm text-white focus:outline-none focus:border-brand-secondary" min="1"><button data-action="process-p2p" data-seller-id="condominio" data-seller-name="CondominioSolar_SP" class="text-xs bg-brand-secondary/20 hover:bg-brand-secondary text-brand-secondary hover:text-white px-3 py-2 rounded-lg font-bold">Comprar</button></div></div></div>
             </div>
             <p id="p2p-feedback" class="text-center text-xs text-brand-accent mt-4 hidden"><i class="fa-solid fa-circle-check"></i> Transação enviada para aprovação...</p>
         </div>

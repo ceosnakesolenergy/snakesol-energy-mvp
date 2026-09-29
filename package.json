@@ -1,0 +1,27 @@
+{
+  "name": "snakesol-energy-mvp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "add_vote_modal.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://localhost:26831/ceosnakesolenergy/snakesol-energy-mvp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.0.0",
+    "@solana/web3.js": "^1.91.8",
+    "buffer": "^6.0.3",
+    "leaflet": "^1.9.4",
+    "tailwindcss": "^3.4.13"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

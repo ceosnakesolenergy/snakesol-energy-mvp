@@ -164,6 +164,50 @@
     let isPhantomConnected = false;
     let userPublicKey = null;
 
+    function switchTab(tabId) {
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach((tab) => {
+        tab.classList.remove('block');
+        tab.classList.add('hidden');
+      });
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('block');
+      }
+
+      if (tabId === 'map') {
+        setTimeout(() => {
+          if (window.map) window.map.invalidateSize();
+        }, 100);
+      }
+
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach((item) => {
+        item.classList.remove('active', 'text-[#14F195]');
+        item.classList.add('text-gray-400');
+      });
+      const activeNav = document.getElementById('nav-' + tabId);
+      if (activeNav) {
+        activeNav.classList.add('active');
+        activeNav.classList.remove('text-gray-400');
+        activeNav.classList.add('text-[#14F195]');
+      }
+
+      const mobNavItems = document.querySelectorAll('.nav-mobile-item');
+      mobNavItems.forEach((item) => {
+        item.classList.remove('text-[#14F195]');
+        item.classList.add('text-gray-400');
+      });
+      const activeMobNav = document.getElementById('mob-nav-' + tabId);
+      if (activeMobNav) {
+        activeMobNav.classList.remove('text-gray-400');
+        activeMobNav.classList.add('text-[#14F195]');
+      }
+    }
+    window.switchTab = switchTab;
+
     // Initialize mock state from sessionStorage (not localStorage!)
     const defaultState = { energy: 50, snake: 0, hw: 1, co2: 14.2, p2p: { solarfazenda: 1500, pedro: 300, condominio: 5000 } };
     window.mockState = SecureStorage.get('snakesol_portfolio_state', defaultState);
@@ -402,6 +446,34 @@
       history.slice().reverse().forEach((tx) => {
         window.addLogEntry(tx.actionName, tx.signature, false);
       });
+    };
+
+    // ========================================================================
+    // NFT MODAL
+    // ========================================================================
+    window.showNFTModal = function() {
+      const modal = document.getElementById('nft-modal');
+      const content = document.getElementById('nft-modal-content');
+      const editionEl = document.getElementById('nft-edition');
+      if (editionEl) editionEl.textContent = String(Math.floor(1000 + Math.random() * 9000));
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modal.classList.remove('opacity-0');
+          if (content) content.classList.remove('scale-95');
+        }, 10);
+      }
+    };
+
+    window.closeNFTModal = function() {
+      const modal = document.getElementById('nft-modal');
+      const content = document.getElementById('nft-modal-content');
+      if (modal) modal.classList.add('opacity-0');
+      if (content) content.classList.add('scale-95');
+      setTimeout(() => {
+        if (modal) modal.classList.add('hidden');
+      }, 300);
     };
 
     // ========================================================================
@@ -919,6 +991,62 @@
         window.updateROIUSD();
       });
       roiSlider.dispatchEvent(new Event('input'));
+    }
+
+    // ========================================================================
+    // EVENT BINDINGS
+    // ========================================================================
+    document.querySelectorAll('[data-tab]').forEach((el) => {
+      el.addEventListener('click', () => switchTab(el.dataset.tab || 'dashboard'));
+    });
+
+    document.addEventListener('click', (event) => {
+      const actionEl = event.target.closest('[data-action]');
+      if (!actionEl) return;
+
+      const action = actionEl.dataset.action;
+
+      if (action === 'connect-wallet') return window.connectPhantom();
+      if (action === 'execute-transaction') return window.executeTransaction(actionEl.dataset.txAction || '');
+      if (action === 'open-sizing-modal') return window.openSizingModal();
+      if (action === 'invert-swap') return window.invertSwap();
+      if (action === 'execute-swap') return window.executeSwap();
+      if (action === 'show-p2p-modal') return window.showP2PModal();
+      if (action === 'show-stake-modal') return window.showStakeModal();
+      if (action === 'show-vote-modal') return window.showVoteModal();
+      if (action === 'close-nft-modal') return window.closeNFTModal();
+      if (action === 'close-vote-modal') return window.closeVoteModal();
+      if (action === 'submit-vote') return window.submitVote();
+      if (action === 'close-stake-modal') return window.closeStakeModal();
+      if (action === 'submit-stake') return window.submitStake();
+      if (action === 'close-sizing-modal') return window.closeSizingModal();
+      if (action === 'calculate-sizing') return window.calculateSizing();
+      if (action === 'reset-sizing') return window.resetSizing();
+      if (action === 'confirm-sizing-purchase') return window.confirmSizingPurchase();
+      if (action === 'close-map-invest-modal') return window.closeMapInvestModal();
+      if (action === 'confirm-map-investment') return window.confirmMapInvestment();
+      if (action === 'close-p2p-modal') return window.closeP2PModal();
+      if (action === 'process-p2p') return window.processP2P(actionEl.dataset.sellerId, actionEl.dataset.sellerName);
+      if (action === 'open-map-invest-modal') return window.openMapInvestModal(actionEl.dataset.mapTarget || 'DePIN');
+    });
+
+    const swapInput = document.getElementById('swap-input');
+    const swapFrom = document.getElementById('swap-from-token');
+    const swapTo = document.getElementById('swap-to-token');
+    if (swapInput) swapInput.addEventListener('input', () => window.updateSwapCalculation());
+    if (swapFrom) swapFrom.addEventListener('change', () => window.updateSwapCalculation());
+    if (swapTo) swapTo.addEventListener('change', () => window.updateSwapCalculation());
+
+    const registrationForm = document.getElementById('registration-form');
+    if (registrationForm) {
+      registrationForm.addEventListener('submit', (event) => {
+        if (typeof window.handleFullRegistration === 'function') {
+          window.handleFullRegistration(event);
+        } else {
+          event.preventDefault();
+          SafeDOM.createToast('Formulário ainda não está pronto. Tente novamente.', 'warning');
+        }
+      });
     }
 
     // ========================================================================
